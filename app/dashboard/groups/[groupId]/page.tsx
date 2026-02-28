@@ -24,6 +24,15 @@ interface SettlementData {
     settlements: Settlement[];
 }
 
+interface Expense {
+    id: string;
+    description: string;
+    amount: number;
+    groupId: string;
+    createdAt: string;
+    paidBy: { id: string; name: string };
+}
+
 const defaultForm = { description: "", amount: "", paidById: "" };
 
 function Spinner({ className = "" }: { className?: string }) {
@@ -63,6 +72,7 @@ export default function GroupBalancesPage({
     const [groupId, setGroupId] = useState<string | null>(null);
     const [balanceData, setBalanceData] = useState<BalanceData | null>(null);
     const [settlementData, setSettlementData] = useState<SettlementData | null>(null);
+    const [expenses, setExpenses] = useState<Expense[]>([]);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -99,10 +109,20 @@ export default function GroupBalancesPage({
                 if (!r.ok) throw new Error(`Settlements: HTTP ${r.status}`);
                 return r.json() as Promise<SettlementData>;
             }),
+            fetch(`/api/expenses`).then((r) => {
+                if (!r.ok) throw new Error(`Expenses: HTTP ${r.status}`);
+                return r.json() as Promise<Expense[]>;
+            }),
         ])
-            .then(([bal, set]) => {
+            .then(([bal, set, exps]) => {
                 setBalanceData(bal);
                 setSettlementData(set);
+                // Filter client-side (backend returns all expenses unfiltered)
+                setExpenses(
+                    exps
+                        .filter((e) => e.groupId === id)
+                        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                );
             })
             .catch((err) => setError(err.message))
             .finally(() => {
@@ -351,12 +371,43 @@ export default function GroupBalancesPage({
                                     )}
                                 </>
                             )}
+
+                            {/* Expense History */}
+                            <p className="text-xs text-gray-500 uppercase tracking-widest mb-3 mt-8">Expense History</p>
+                            {expenses.length === 0 ? (
+                                <div className="rounded-xl border border-gray-800 bg-gray-900 px-5 py-6 text-center text-gray-500 text-sm">
+                                    No expenses recorded yet.
+                                </div>
+                            ) : (
+                                <ul className="space-y-3">
+                                    {expenses.map((exp) => (
+                                        <li
+                                            key={exp.id}
+                                            className="flex items-center justify-between rounded-xl border border-gray-800 bg-gray-900 px-5 py-4"
+                                        >
+                                            <div className="min-w-0">
+                                                <p className="font-medium text-white truncate">{exp.description}</p>
+                                                <p className="text-xs text-gray-500 mt-0.5">
+                                                    Paid by <span className="text-gray-400">{exp.paidBy.name}</span>
+                                                    {" · "}
+                                                    {new Date(exp.createdAt).toLocaleDateString("en-IN", {
+                                                        day: "numeric", month: "short", year: "numeric",
+                                                    })}
+                                                </p>
+                                            </div>
+                                            <span className="ml-4 text-white font-semibold tabular-nums shrink-0">
+                                                ₹{Number(exp.amount).toFixed(2)}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
                     )}
                 </div>
             </main>
 
-            {/* Modal */}
+            {/* Expense Modal */}
             {modalOpen && (
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
