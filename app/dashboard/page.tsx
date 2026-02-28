@@ -106,8 +106,8 @@ export default function DashboardPage() {
                     {/* Header */}
                     <div className="flex items-start justify-between mb-10">
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight">YourSplit</h1>
-                            <p className="text-gray-400 mt-1 text-sm">Your groups</p>
+                            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">YourSplit</h1>
+                            <p className="text-gray-400 mt-1 text-sm font-medium">Your active groups</p>
                         </div>
                         <div className="flex items-center gap-3">
                             <Link
@@ -167,26 +167,35 @@ export default function DashboardPage() {
 
                             {/* Group list */}
                             {groups.length > 0 && (
-                                <ul className="space-y-3">
+                                <ul className="space-y-4">
                                     {groups.map((group) => (
-                                        <li key={group.id}>
+                                        <li key={group.id} className="group relative">
+                                            {/* Glow effect behind card on hover */}
+                                            <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-indigo-500/0 via-indigo-500/0 to-indigo-500/0 opacity-0 group-hover:from-indigo-500/20 group-hover:via-indigo-500/10 group-hover:to-purple-500/20 group-hover:opacity-100 blur transition duration-500"></div>
+
                                             <Link
                                                 href={`/dashboard/groups/${group.id}`}
-                                                className="flex items-center justify-between rounded-xl border border-gray-800 bg-gray-900 px-5 py-4 hover:border-indigo-600 hover:bg-gray-800 transition-colors group"
+                                                className="relative flex items-center justify-between rounded-xl border border-gray-800 bg-gray-900/80 px-6 py-5 hover:border-indigo-500/50 hover:bg-gray-800/80 hover:-translate-y-0.5 transition-all duration-300 shadow-sm hover:shadow-indigo-500/10"
                                             >
                                                 <div>
-                                                    <p className="font-medium text-white group-hover:text-indigo-400 transition-colors">
+                                                    <p className="font-semibold text-lg text-white group-hover:text-indigo-400 transition-colors">
                                                         {group.name}
                                                     </p>
-                                                    <p className="text-xs text-gray-500 mt-0.5">
-                                                        {new Date(group.createdAt).toLocaleDateString("en-IN", {
+                                                    <p className="text-xs text-gray-500 mt-1 font-medium tracking-wide">
+                                                        CREATED {new Date(group.createdAt).toLocaleDateString("en-IN", {
                                                             day: "numeric",
                                                             month: "short",
                                                             year: "numeric",
-                                                        })}
+                                                        }).toUpperCase()}
                                                     </p>
                                                 </div>
-                                                <span className="text-gray-600 group-hover:text-indigo-500 transition-colors text-lg">→</span>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 group-hover:bg-indigo-600/20 text-gray-400 group-hover:text-indigo-400 transition-all duration-300">
+                                                        <svg className="w-4 h-4 translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                                        </svg>
+                                                    </span>
+                                                </div>
                                             </Link>
                                         </li>
                                     ))}

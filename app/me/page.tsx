@@ -162,8 +162,8 @@ export default function MePage() {
                         <Link href="/dashboard" className="text-sm text-indigo-400 hover:text-indigo-300 font-medium tracking-wide flex items-center gap-1.5 mb-3 transition-colors">
                             <span>←</span> Back to Dashboard
                         </Link>
-                        <h1 className="text-3xl font-bold tracking-tight text-white mb-1">Financial Overview</h1>
-                        <p className="text-gray-400 text-sm">Review your cross-group standing across the platform.</p>
+                        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-1">Financial Overview</h1>
+                        <p className="text-gray-400 text-sm font-medium">Review your cross-group standing across the platform.</p>
                     </div>
 
                     <div className="flex items-center gap-3">
@@ -195,33 +195,39 @@ export default function MePage() {
                         {/* Top Level Metric Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Owe Metric */}
-                            <div className="bg-gray-900/40 border border-gray-800 rounded-2xl p-6 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                    <svg className="w-16 h-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="bg-gradient-to-br from-gray-900/80 to-gray-900 border border-gray-800 rounded-2xl p-6 relative overflow-hidden group hover:border-red-900/50 hover:shadow-lg hover:shadow-red-500/5 transition-all duration-300">
+                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500">
+                                    <svg className="w-20 h-20 text-red-500 transform translate-x-4 -translate-y-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
                                     </svg>
                                 </div>
-                                <p className="text-sm text-gray-400 font-medium uppercase tracking-widest mb-2">Total You Owe</p>
-                                <div className="flex items-baseline gap-2 text-red-400">
-                                    <span className="text-4xl font-bold tracking-tight">₹{financials.totalIOwe.toFixed(2)}</span>
+                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                    Total You Owe
+                                </p>
+                                <div className="flex items-baseline gap-2 text-white mt-1">
+                                    <span className="text-4xl font-bold tracking-tight tabular-nums">₹{financials.totalIOwe.toFixed(2)}</span>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-4 leading-snug">
+                                <p className="text-xs text-gray-500 mt-4 leading-snug font-medium">
                                     The sum of outstanding debts across all your active split groups.
                                 </p>
                             </div>
 
                             {/* Owed To Metric */}
-                            <div className="bg-gray-900/40 border border-gray-800 rounded-2xl p-6 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                    <svg className="w-16 h-16 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="bg-gradient-to-br from-gray-900/80 to-gray-900 border border-gray-800 rounded-2xl p-6 relative overflow-hidden group hover:border-emerald-900/50 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300">
+                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500">
+                                    <svg className="w-20 h-20 text-emerald-500 transform translate-x-4 -translate-y-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                                     </svg>
                                 </div>
-                                <p className="text-sm text-gray-400 font-medium uppercase tracking-widest mb-2">Total Owed To You</p>
-                                <div className="flex items-baseline gap-2 text-emerald-400">
-                                    <span className="text-4xl font-bold tracking-tight">₹{financials.totalOwedToMe.toFixed(2)}</span>
+                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Total Owed To You
+                                </p>
+                                <div className="flex items-baseline gap-2 text-white mt-1">
+                                    <span className="text-4xl font-bold tracking-tight tabular-nums">₹{financials.totalOwedToMe.toFixed(2)}</span>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-4 leading-snug">
+                                <p className="text-xs text-gray-500 mt-4 leading-snug font-medium">
                                     The sum of amounts that other group members currently owe you.
                                 </p>
                             </div>
@@ -229,10 +235,10 @@ export default function MePage() {
 
                         {/* Net Position Banner */}
                         <div className={`rounded-xl px-6 py-5 flex items-center justify-between border ${financials.netBalance > 0
-                                ? 'bg-emerald-950/20 border-emerald-900/50 text-emerald-400'
-                                : financials.netBalance < 0
-                                    ? 'bg-red-950/20 border-red-900/50 text-red-400'
-                                    : 'bg-gray-800 border-gray-700 text-gray-400'
+                            ? 'bg-emerald-950/20 border-emerald-900/50 text-emerald-400'
+                            : financials.netBalance < 0
+                                ? 'bg-red-950/20 border-red-900/50 text-red-400'
+                                : 'bg-gray-800 border-gray-700 text-gray-400'
                             }`}>
                             <div>
                                 <h3 className="text-sm font-semibold uppercase tracking-wide">Net Position</h3>
@@ -262,14 +268,14 @@ export default function MePage() {
                                 ) : (
                                     <ul className="space-y-3">
                                         {financials.creditorGroups.map((cg) => (
-                                            <li key={cg.group.id} className="flex items-center justify-between bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors rounded-xl px-5 py-4">
+                                            <li key={cg.group.id} className="group flex items-center justify-between bg-gray-900/60 border border-gray-800/80 hover:border-gray-700 hover:bg-gray-800/80 hover:-translate-y-0.5 shadow-sm hover:shadow-emerald-500/5 transition-all duration-300 rounded-xl px-5 py-4">
                                                 <div className="truncate pr-4">
-                                                    <Link href={`/dashboard/groups/${cg.group.id}`} className="font-medium text-white hover:text-indigo-400 transition-colors truncate block">
+                                                    <Link href={`/dashboard/groups/${cg.group.id}`} className="font-semibold text-white group-hover:text-indigo-400 transition-colors truncate block text-base">
                                                         {cg.group.name}
                                                     </Link>
-                                                    <p className="text-xs text-gray-500 mt-0.5">Gets back</p>
+                                                    <p className="text-[11px] font-bold tracking-wide text-gray-500 mt-1 uppercase">Gets back</p>
                                                 </div>
-                                                <span className="text-emerald-400 font-semibold tabular-nums shrink-0">
+                                                <span className="text-emerald-400 text-lg font-bold tabular-nums shrink-0">
                                                     +₹{cg.balance.toFixed(2)}
                                                 </span>
                                             </li>
@@ -292,14 +298,14 @@ export default function MePage() {
                                 ) : (
                                     <ul className="space-y-3">
                                         {financials.debtorGroups.map((dg) => (
-                                            <li key={dg.group.id} className="flex items-center justify-between bg-gray-900 border border-gray-800 hover:border-gray-700 transition-colors rounded-xl px-5 py-4">
+                                            <li key={dg.group.id} className="group flex items-center justify-between bg-gray-900/60 border border-gray-800/80 hover:border-gray-700 hover:bg-gray-800/80 hover:-translate-y-0.5 shadow-sm hover:shadow-red-500/5 transition-all duration-300 rounded-xl px-5 py-4">
                                                 <div className="truncate pr-4">
-                                                    <Link href={`/dashboard/groups/${dg.group.id}`} className="font-medium text-white hover:text-indigo-400 transition-colors truncate block">
+                                                    <Link href={`/dashboard/groups/${dg.group.id}`} className="font-semibold text-white group-hover:text-indigo-400 transition-colors truncate block text-base">
                                                         {dg.group.name}
                                                     </Link>
-                                                    <p className="text-xs text-gray-500 mt-0.5">Owes</p>
+                                                    <p className="text-[11px] font-bold tracking-wide text-gray-500 mt-1 uppercase">Owes</p>
                                                 </div>
-                                                <span className="text-red-400 font-semibold tabular-nums shrink-0">
+                                                <span className="text-red-400 text-lg font-bold tabular-nums shrink-0">
                                                     -₹{Math.abs(dg.balance).toFixed(2)}
                                                 </span>
                                             </li>

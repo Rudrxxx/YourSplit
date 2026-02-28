@@ -414,30 +414,40 @@ export default function GroupBalancesPage({
                             </div>
 
                             {/* Summary */}
-                            <div className="rounded-xl border border-gray-800 bg-gray-900 px-5 py-5 mb-6 grid grid-cols-2 gap-4">
+                            <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 via-gray-900 to-indigo-950/20 px-6 py-6 mb-8 grid grid-cols-2 gap-6 shadow-xl shadow-black/20">
                                 <div>
-                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Total Expenses</p>
-                                    <p className="text-2xl font-semibold">₹{balanceData.totalExpenses.toFixed(2)}</p>
+                                    <p className="text-xs text-indigo-400 font-semibold uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Total Expenses
+                                    </p>
+                                    <p className="text-3xl font-bold tracking-tight text-white">₹{balanceData.totalExpenses.toFixed(2)}</p>
                                 </div>
-                                <div>
-                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Per Person</p>
-                                    <p className="text-2xl font-semibold">₹{balanceData.perPersonShare.toFixed(2)}</p>
+                                <div className="border-l border-gray-800/60 pl-6">
+                                    <p className="text-xs text-gray-400 font-semibold uppercase tracking-widest mb-1.5 flex items-center gap-2">
+                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                        Per Person
+                                    </p>
+                                    <p className="text-3xl font-bold tracking-tight text-gray-100">₹{balanceData.perPersonShare.toFixed(2)}</p>
                                 </div>
                             </div>
 
                             {/* Insights strip */}
-                            <div className="rounded-xl border border-gray-800 bg-gray-900/60 px-5 py-4 mb-6 grid grid-cols-3 divide-x divide-gray-800">
-                                <div className="pr-4">
-                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-0.5">Members</p>
-                                    <p className="text-lg font-semibold">{balanceData.balances.length}</p>
+                            <div className="rounded-xl border border-gray-800/60 bg-gray-900/40 backdrop-blur-sm px-6 py-4 mb-8 grid grid-cols-3 divide-x divide-gray-800/60 shadow-inner">
+                                <div className="pr-5 group cursor-pointer" onClick={openMemberModal}>
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1 group-hover:text-indigo-400 transition-colors">Members</p>
+                                    <p className="text-xl font-semibold text-gray-200 group-hover:text-white transition-colors">{balanceData.balances.length}</p>
                                 </div>
-                                <div className="px-4">
-                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-0.5">Expenses</p>
-                                    <p className="text-lg font-semibold">{expenses.length}</p>
+                                <div className="px-5 group cursor-pointer" onClick={() => document.getElementById('expense-history')?.scrollIntoView({ behavior: 'smooth' })}>
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1 group-hover:text-indigo-400 transition-colors">Expenses</p>
+                                    <p className="text-xl font-semibold text-gray-200 group-hover:text-white transition-colors">{expenses.length}</p>
                                 </div>
-                                <div className="pl-4">
-                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-0.5">Last Expense</p>
-                                    <p className="text-lg font-semibold">
+                                <div className="pl-5">
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Last Expense</p>
+                                    <p className="text-lg font-medium text-gray-300">
                                         {expenses.length > 0
                                             ? new Date(expenses[0].createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })
                                             : "—"}
@@ -447,17 +457,17 @@ export default function GroupBalancesPage({
 
                             {/* No expenses empty state OR member/settlement sections */}
                             {balanceData.totalExpenses === 0 ? (
-                                <div className="rounded-2xl border border-dashed border-gray-700 bg-gray-900/50 px-8 py-14 text-center">
-                                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-gray-700 bg-gray-800 text-2xl">
+                                <div className="rounded-2xl border border-dashed border-gray-700 bg-gray-900/50 px-8 py-16 text-center shadow-sm">
+                                    <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-gray-700 bg-gray-800 text-3xl shadow-lg shadow-black/20">
                                         💸
                                     </div>
-                                    <h2 className="text-base font-semibold text-white mb-1">No expenses yet</h2>
-                                    <p className="text-sm text-gray-500 max-w-xs mx-auto">
-                                        Add the first expense to start tracking who owes what.
+                                    <h2 className="text-lg font-semibold text-white mb-2">No expenses yet</h2>
+                                    <p className="text-sm text-gray-500 max-w-sm mx-auto leading-relaxed">
+                                        Add the first expense to start tracking who owes what across the group.
                                     </p>
                                     <button
                                         onClick={openModal}
-                                        className="mt-5 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors px-4 py-2 text-sm font-medium text-white"
+                                        className="mt-6 rounded-lg bg-indigo-600 hover:bg-indigo-500 hover:-translate-y-0.5 shadow-lg shadow-indigo-500/20 transition-all duration-300 px-5 py-2.5 text-sm font-medium text-white"
                                     >
                                         + Add First Expense
                                     </button>
@@ -496,15 +506,15 @@ export default function GroupBalancesPage({
                                         {balanceData.balances.map((member) => (
                                             <li
                                                 key={member.userId}
-                                                className="flex items-center justify-between rounded-xl border border-gray-800 bg-gray-900 px-5 py-4"
+                                                className="flex items-center justify-between rounded-xl border border-gray-800/80 bg-gray-900/60 px-5 py-4 hover:bg-gray-800/80 hover:border-gray-700 hover:-translate-y-0.5 transition-all duration-300"
                                             >
                                                 <div>
-                                                    <p className="font-medium text-white">{member.name}</p>
-                                                    <p className={`text-sm mt-0.5 ${balanceColor(member.balance)}`}>
+                                                    <p className="font-semibold text-white text-base">{member.name}</p>
+                                                    <p className={`text-sm mt-0.5 font-medium ${balanceColor(member.balance)}`}>
                                                         {balanceLabel(member.balance)}
                                                     </p>
                                                 </div>
-                                                <span className={`text-lg font-semibold tabular-nums ${balanceColor(member.balance)}`}>
+                                                <span className={`text-lg font-bold tabular-nums tracking-tight ${balanceColor(member.balance)}`}>
                                                     {member.balance > 0 ? "+" : ""}₹{member.balance.toFixed(2)}
                                                 </span>
                                             </li>
@@ -513,22 +523,22 @@ export default function GroupBalancesPage({
 
                                     <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Settlement Plan</p>
                                     {settlementData.settlements.length === 0 ? (
-                                        <div className="rounded-xl border border-gray-800 bg-gray-900 px-5 py-6 text-center text-gray-500 text-sm">
-                                            ✓ All settled up
+                                        <div className="rounded-xl border border-gray-800/60 bg-emerald-950/10 px-5 py-6 text-center text-emerald-500/80 text-sm font-medium">
+                                            ✓ All settled up securely
                                         </div>
                                     ) : (
                                         <ul className="space-y-3">
                                             {settlementData.settlements.map((s, i) => (
                                                 <li
                                                     key={i}
-                                                    className="flex items-center justify-between rounded-xl border border-gray-800 bg-gray-900 px-5 py-4"
+                                                    className="flex items-center justify-between rounded-xl border border-indigo-900/30 bg-indigo-950/10 px-5 py-4 shadow-sm hover:border-indigo-800/50 transition-colors"
                                                 >
-                                                    <div className="flex items-center gap-2 text-sm">
-                                                        <span className="font-medium text-red-400">{s.from}</span>
-                                                        <span className="text-gray-600">→</span>
-                                                        <span className="font-medium text-emerald-400">{s.to}</span>
+                                                    <div className="flex items-center gap-3 text-sm">
+                                                        <span className="font-semibold text-red-400">{s.from}</span>
+                                                        <span className="text-gray-600 font-bold">→</span>
+                                                        <span className="font-semibold text-emerald-400">{s.to}</span>
                                                     </div>
-                                                    <span className="text-white font-semibold tabular-nums">
+                                                    <span className="text-white font-bold tracking-tight tabular-nums">
                                                         ₹{s.amount.toFixed(2)}
                                                     </span>
                                                 </li>
@@ -539,57 +549,61 @@ export default function GroupBalancesPage({
                             )}
 
                             {/* Expense History */}
-                            <p className="text-xs text-gray-500 uppercase tracking-widest mb-3 mt-8">Expense History</p>
-                            {expenses.length === 0 ? (
-                                <div className="rounded-xl border border-gray-800 bg-gray-900 px-5 py-6 text-center text-gray-500 text-sm">
-                                    No expenses recorded yet.
-                                </div>
-                            ) : (
-                                <ul className="space-y-3">
-                                    {expenses.map((exp) => (
-                                        <li
-                                            key={exp.id}
-                                            className="flex items-center justify-between rounded-xl border border-gray-800 bg-gray-900 px-5 py-4"
-                                        >
-                                            <div className="min-w-0">
-                                                <p className="font-medium text-white truncate">{exp.description}</p>
-                                                <p className="text-xs text-gray-500 mt-0.5">
-                                                    Paid by <span className="text-gray-400">{exp.paidBy.name}</span>
-                                                    {" · "}
-                                                    {new Date(exp.createdAt).toLocaleDateString("en-IN", {
-                                                        day: "numeric", month: "short", year: "numeric",
-                                                    })}
-                                                </p>
-                                            </div>
-                                            <span className="ml-4 text-white font-semibold tabular-nums shrink-0">
-                                                ₹{Number(exp.amount).toFixed(2)}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
+                            <div id="expense-history" className="pt-8">
+                                <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Expense History</p>
+                                {expenses.length === 0 ? (
+                                    <div className="rounded-xl border border-gray-800/60 bg-gray-900/40 px-5 py-6 text-center text-gray-500 text-sm">
+                                        No expenses recorded yet.
+                                    </div>
+                                ) : (
+                                    <ul className="space-y-3">
+                                        {expenses.map((exp) => (
+                                            <li
+                                                key={exp.id}
+                                                className="flex items-center justify-between rounded-xl border border-gray-800/60 bg-gray-900/60 px-5 py-4 hover:border-gray-700 hover:bg-gray-800/80 transition-colors"
+                                            >
+                                                <div className="min-w-0">
+                                                    <p className="font-semibold text-white truncate text-base">{exp.description}</p>
+                                                    <p className="text-xs text-gray-500 mt-1 font-medium tracking-wide">
+                                                        PAID BY <span className="text-gray-300 font-semibold">{exp.paidBy.name.toUpperCase()}</span>
+                                                        {" · "}
+                                                        {new Date(exp.createdAt).toLocaleDateString("en-IN", {
+                                                            day: "2-digit", month: "short", year: "numeric",
+                                                        }).toUpperCase()}
+                                                    </p>
+                                                </div>
+                                                <span className="ml-4 text-white font-bold tracking-tight text-lg tabular-nums shrink-0">
+                                                    ₹{Number(exp.amount).toFixed(2)}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
 
                             {/* Activity Timeline */}
-                            <p className="text-xs text-gray-500 uppercase tracking-widest mb-4 mt-10">Activity Timeline</p>
-                            {activities.length === 0 ? (
-                                <div className="rounded-xl border border-gray-800 bg-gray-900 px-5 py-6 text-center text-gray-500 text-sm">
-                                    No activity yet.
-                                </div>
-                            ) : (
-                                <div className="relative border-l border-gray-800 ml-3 space-y-6 pb-4">
-                                    {activities.map((act) => (
-                                        <div key={act.id} className="relative pl-6">
-                                            <span className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-indigo-500 ring-4 ring-gray-950"></span>
-                                            <p className="text-sm text-gray-200">{act.message}</p>
-                                            <p className="text-xs text-gray-500 mt-1">
-                                                {new Date(act.createdAt).toLocaleString("en-IN", {
-                                                    day: "numeric", month: "short", hour: "numeric", minute: "2-digit"
-                                                })}
-                                            </p>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
+                            <div className="pt-10">
+                                <p className="text-xs text-gray-500 uppercase tracking-widest mb-4">Activity Timeline</p>
+                                {activities.length === 0 ? (
+                                    <div className="rounded-xl border border-gray-800/60 bg-gray-900/40 px-5 py-6 text-center text-gray-500 text-sm">
+                                        No activity yet.
+                                    </div>
+                                ) : (
+                                    <div className="relative border-l border-gray-800 ml-3 space-y-6 pb-4">
+                                        {activities.map((act) => (
+                                            <div key={act.id} className="relative pl-6 group">
+                                                <span className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-indigo-500 ring-4 ring-gray-950 group-hover:bg-indigo-400 group-hover:ring-gray-900 transition-colors shadow-sm"></span>
+                                                <p className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">{act.message}</p>
+                                                <p className="text-[11px] font-medium tracking-wide text-gray-500 mt-1">
+                                                    {new Date(act.createdAt).toLocaleString("en-IN", {
+                                                        day: "numeric", month: "short", hour: "numeric", minute: "2-digit"
+                                                    }).toUpperCase()}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>
