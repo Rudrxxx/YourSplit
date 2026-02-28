@@ -7,14 +7,21 @@ datasource db {
   provider = "postgresql"
 }
 
+enum SplitType {
+  EQUAL
+  EXACT
+  PERCENT
+}
+
 model User {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
   createdAt DateTime @default(now())
 
-  groups    GroupMember[]
-  expenses  Expense[]     @relation("PaidBy")
+  groups        GroupMember[]
+  expenses      Expense[]      @relation("PaidBy")
+  expenseSplits ExpenseSplit[]
 }
 
 model Group {
@@ -45,7 +52,19 @@ model Expense {
 
   groupId String
   paidById String
+  splitType SplitType @default(EQUAL)
 
   group  Group @relation(fields: [groupId], references: [id])
   paidBy User  @relation("PaidBy", fields: [paidById], references: [id])
+  splits ExpenseSplit[]
+}
+
+model ExpenseSplit {
+  id        String  @id @default(uuid())
+  expenseId String
+  userId    String
+  amount    Float
+
+  expense   Expense @relation(fields: [expenseId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
 }

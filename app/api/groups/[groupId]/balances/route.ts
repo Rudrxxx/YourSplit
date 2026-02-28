@@ -31,6 +31,7 @@ export async function GET(
 
     const expenses = await prisma.expense.findMany({
       where: { groupId },
+      include: { splits: true },
     });
 
     const balances: Record<string, number> = {};
@@ -42,13 +43,23 @@ export async function GET(
 
     for (const expense of expenses) {
       totalExpenses += expense.amount;
-      const splitAmount = expense.amount / members.length;
 
-      for (const member of members) {
-        balances[member.userId] -= splitAmount;
+      if (expense.splits && expense.splits.length > 0) {
+        for (const split of expense.splits) {
+          if (balances[split.userId] !== undefined) {
+            balances[split.userId] -= split.amount;
+          }
+        }
+      } else {
+        const splitAmount = expense.amount / members.length;
+        for (const member of members) {
+          balances[member.userId] -= splitAmount;
+        }
       }
 
-      balances[expense.paidById] += expense.amount;
+      if (balances[expense.paidById] !== undefined) {
+        balances[expense.paidById] += expense.amount;
+      }
     }
 
     return NextResponse.json({
