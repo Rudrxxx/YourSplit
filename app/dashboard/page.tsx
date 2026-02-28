@@ -109,14 +109,22 @@ export default function DashboardPage() {
                             <h1 className="text-3xl font-bold tracking-tight">YourSplit</h1>
                             <p className="text-gray-400 mt-1 text-sm">Your groups</p>
                         </div>
-                        <button
-                            onClick={openModal}
-                            disabled={refreshing}
-                            className="flex items-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 disabled:opacity-50 transition-colors px-4 py-2 text-sm font-medium text-white"
-                        >
-                            {refreshing ? <Spinner className="w-4 h-4" /> : null}
-                            + Create Group
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <Link
+                                href="/me"
+                                className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-900 hover:bg-gray-800 transition-colors px-4 py-2 text-sm font-medium text-gray-300"
+                            >
+                                Personal Overview
+                            </Link>
+                            <button
+                                onClick={openModal}
+                                disabled={refreshing}
+                                className="flex items-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 disabled:opacity-50 transition-colors px-4 py-2 text-sm font-medium text-white"
+                            >
+                                {refreshing ? <Spinner className="w-4 h-4" /> : null}
+                                + Create Group
+                            </button>
+                        </div>
                     </div>
 
                     {/* Loading */}
