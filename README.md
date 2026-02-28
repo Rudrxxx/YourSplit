@@ -51,3 +51,19 @@ Use a greedy minimum cash flow algorithm to match largest debtor with largest cr
 - Net balance calculation
 - Debt simplification engine
 - Before vs After settlement comparison
+
+---
+
+## 4. System Architecture
+
+### High-Level Flow
+User → Next.js Frontend → API Routes → Optimization Engine → PostgreSQL Database → Response
+
+### Architecture Description
+The system follows a full-stack TypeScript architecture using Next.js App Router. 
+Frontend components interact with API routes that handle business logic. 
+The optimization engine processes net balances and computes minimum settlement transactions. 
+All financial data is stored in PostgreSQL using Prisma ORM.
+
+### Architecture Diagram
+(To be added before final submission)
