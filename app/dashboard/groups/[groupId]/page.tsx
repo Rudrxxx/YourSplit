@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 
 interface Balance {
     userId: string;
@@ -136,6 +136,21 @@ export default function GroupBalancesPage({
     useEffect(() => {
         if (groupId) fetchData(groupId);
     }, [groupId, fetchData]);
+
+    const analytics = useMemo(() => {
+        const totals: Record<string, { name: string; amount: number }> = {};
+        expenses.forEach((exp) => {
+            if (!totals[exp.paidById]) {
+                totals[exp.paidById] = { name: exp.paidBy?.name || "Unknown", amount: 0 };
+            }
+            totals[exp.paidById].amount += exp.amount;
+        });
+        const leaderboard = Object.values(totals).sort((a, b) => b.amount - a.amount);
+        return {
+            leaderboard,
+            topContributor: leaderboard.length > 0 ? leaderboard[0] : null,
+        };
+    }, [expenses]);
 
     const openModal = () => {
         setForm({ ...defaultForm, paidById: balanceData?.balances[0]?.userId ?? "" });
@@ -352,6 +367,33 @@ export default function GroupBalancesPage({
                                 </div>
                             ) : (
                                 <>
+                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Contributor Analytics</p>
+                                    <div className="rounded-xl border border-gray-800 bg-gray-900 overflow-hidden mb-8">
+                                        {analytics.topContributor && (
+                                            <div className="bg-indigo-900/40 border-b border-indigo-500/30 px-5 py-4 flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-xs text-indigo-400 font-medium uppercase tracking-wider mb-0.5">Top Contributor 👑</p>
+                                                    <p className="text-white font-semibold text-lg">{analytics.topContributor.name}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-xs text-indigo-300/80 mb-0.5">Total Spent</p>
+                                                    <p className="text-indigo-400 font-bold text-xl">₹{analytics.topContributor.amount.toFixed(2)}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        <ul className="divide-y divide-gray-800">
+                                            {analytics.leaderboard.map((user, idx) => (
+                                                <li key={idx} className="flex items-center justify-between px-5 py-3 bg-gray-900/80">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-sm text-gray-500 font-medium w-4">{idx + 1}.</span>
+                                                        <span className="text-gray-200">{user.name}</span>
+                                                    </div>
+                                                    <span className="text-white font-medium">₹{user.amount.toFixed(2)}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
                                     <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Members</p>
                                     <ul className="space-y-3 mb-8">
                                         {balanceData.balances.map((member) => (
