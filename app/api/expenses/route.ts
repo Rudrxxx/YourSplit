@@ -32,7 +32,15 @@ export async function POST(req: Request) {
           create: computedSplits,
         },
       },
-      include: { splits: true },
+      include: { splits: true, paidBy: true },
+    });
+
+    await prisma.activityLog.create({
+      data: {
+        groupId,
+        type: "EXPENSE_ADDED",
+        message: `${expense.paidBy.name} added expense ₹${amount} for ${description}`,
+      }
     });
 
     return NextResponse.json(expense);

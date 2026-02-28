@@ -24,12 +24,21 @@ interface SettlementData {
     settlements: Settlement[];
 }
 
+interface ActivityLog {
+    id: string;
+    groupId: string;
+    type: string;
+    message: string;
+    createdAt: string;
+}
+
 interface Expense {
     id: string;
     description: string;
     amount: number;
     groupId: string;
     createdAt: string;
+    paidById: string;
     paidBy: { id: string; name: string };
 }
 
@@ -76,6 +85,7 @@ export default function GroupBalancesPage({
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [activities, setActivities] = useState<ActivityLog[]>([]);
 
     // Expense modal state
     const [modalOpen, setModalOpen] = useState(false);
@@ -115,10 +125,15 @@ export default function GroupBalancesPage({
                 if (!r.ok) throw new Error(`Expenses: HTTP ${r.status}`);
                 return r.json() as Promise<Expense[]>;
             }),
+            fetch(`/api/groups/${id}/activity`).then((r) => {
+                if (!r.ok) throw new Error(`Activities: HTTP ${r.status}`);
+                return r.json() as Promise<ActivityLog[]>;
+            }),
         ])
-            .then(([bal, set, exps]) => {
+            .then(([bal, set, exps, acts]) => {
                 setBalanceData(bal);
                 setSettlementData(set);
+                setActivities(acts);
                 // Filter client-side (backend returns all expenses unfiltered)
                 setExpenses(
                     exps
@@ -470,6 +485,28 @@ export default function GroupBalancesPage({
                                         </li>
                                     ))}
                                 </ul>
+                            )}
+
+                            {/* Activity Timeline */}
+                            <p className="text-xs text-gray-500 uppercase tracking-widest mb-4 mt-10">Activity Timeline</p>
+                            {activities.length === 0 ? (
+                                <div className="rounded-xl border border-gray-800 bg-gray-900 px-5 py-6 text-center text-gray-500 text-sm">
+                                    No activity yet.
+                                </div>
+                            ) : (
+                                <div className="relative border-l border-gray-800 ml-3 space-y-6 pb-4">
+                                    {activities.map((act) => (
+                                        <div key={act.id} className="relative pl-6">
+                                            <span className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-indigo-500 ring-4 ring-gray-950"></span>
+                                            <p className="text-sm text-gray-200">{act.message}</p>
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                {new Date(act.createdAt).toLocaleString("en-IN", {
+                                                    day: "numeric", month: "short", hour: "numeric", minute: "2-digit"
+                                                })}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                         </div>
                     )}

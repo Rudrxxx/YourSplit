@@ -31,6 +31,7 @@ model Group {
 
   members   GroupMember[]
   expenses  Expense[]
+  activities ActivityLog[]
 }
 
 model GroupMember {
@@ -67,4 +68,14 @@ model ExpenseSplit {
 
   expense   Expense @relation(fields: [expenseId], references: [id])
   user      User    @relation(fields: [userId], references: [id])
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  groupId   String
+  type      String
+  message   String
+  createdAt DateTime @default(now())
+
+  group     Group    @relation(fields: [groupId], references: [id])
 }

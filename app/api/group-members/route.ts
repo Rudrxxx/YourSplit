@@ -10,6 +10,15 @@ export async function POST(req: Request) {
         groupId: body.groupId,
         userId: body.userId,
       },
+      include: { user: true },
+    });
+
+    await prisma.activityLog.create({
+      data: {
+        groupId: body.groupId,
+        type: "MEMBER_JOINED",
+        message: `${member.user.name} joined the group`,
+      }
     });
 
     return NextResponse.json(member);
