@@ -21,10 +21,12 @@ export async function GET(
     });
 
     if (members.length === 0) {
-      return NextResponse.json(
-        { error: "No members found in this group" },
-        { status: 400 }
-      );
+      return NextResponse.json({
+        groupId,
+        totalExpenses: 0,
+        perPersonShare: 0,
+        balances: [],
+      });
     }
 
     const expenses = await prisma.expense.findMany({
