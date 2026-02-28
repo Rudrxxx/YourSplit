@@ -192,3 +192,39 @@ These approaches do not guarantee minimal transactions.
 ### Deployment
 - Vercel (Frontend + API)
 - PostgreSQL Cloud Provider (Supabase / Local during development)
+
+---
+
+## 10. Module-wise Development & Deliverables
+
+### Checkpoint 1: Research & Planning
+- Finalized problem understanding and scope
+- Defined MVP feature set
+- Selected technology stack
+- Designed database schema structure
+- Defined optimization algorithm approach
+- Structured repository with clean commit history
+
+### Checkpoint 2: Backend Development
+- Implement database schema in Prisma
+- Implement expense creation APIs
+- Implement net balance calculation logic
+- Implement optimization engine
+
+### Checkpoint 3: Frontend Development
+- Build dashboard UI
+- Group detail page
+- Expense logging interface
+- Settlement comparison view
+
+### Checkpoint 4: Model Training
+- Not applicable (Algorithm-based optimization model)
+
+### Checkpoint 5: Model Integration
+- Integrate optimization engine with API layer
+- Display simplified settlements
+
+### Checkpoint 6: Deployment
+- Deploy application to Vercel
+- Connect PostgreSQL database
+- Perform end-to-end testing
