@@ -101,6 +101,14 @@ export default function GroupBalancesPage({
     const [memberSubmitting, setMemberSubmitting] = useState(false);
     const [memberFormError, setMemberFormError] = useState<string | null>(null);
 
+    // Settlement modal state
+    const [settlementModalOpen, setSettlementModalOpen] = useState(false);
+    const [settlementForm, setSettlementForm] = useState({ fromUserId: "", toUserId: "", amount: "" });
+    const [settlementSubmitting, setSettlementSubmitting] = useState(false);
+    const [settlementFieldErrors, setSettlementFieldErrors] = useState<{
+        fromUserId?: string; toUserId?: string; amount?: string; server?: string;
+    }>({});
+
     // Toast
     const [toast, setToast] = useState<string | null>(null);
 
@@ -177,6 +185,12 @@ export default function GroupBalancesPage({
         setMemberForm({ name: "", email: "" });
         setMemberFormError(null);
         setMemberModalOpen(true);
+    };
+
+    const openSettlementModal = () => {
+        setSettlementForm({ fromUserId: "", toUserId: "", amount: "" });
+        setSettlementFieldErrors({});
+        setSettlementModalOpen(true);
     };
 
     const handleMemberSubmit = async (e: React.FormEvent) => {
@@ -262,6 +276,56 @@ export default function GroupBalancesPage({
         }
     };
 
+    const handleSettlementSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!groupId) return;
+
+        const amt = parseFloat(settlementForm.amount);
+        const errs: { fromUserId?: string; toUserId?: string; amount?: string } = {};
+
+        if (!settlementForm.fromUserId) errs.fromUserId = "Select who paid.";
+        if (!settlementForm.toUserId) errs.toUserId = "Select who received the payment.";
+        if (settlementForm.fromUserId && settlementForm.toUserId && settlementForm.fromUserId === settlementForm.toUserId) {
+            errs.toUserId = "Payer and receiver cannot be the same person.";
+        }
+        if (!settlementForm.amount || isNaN(amt) || amt <= 0) errs.amount = "Enter a valid amount greater than 0.";
+
+        if (Object.keys(errs).length > 0) {
+            setSettlementFieldErrors(errs);
+            return;
+        }
+
+        setSettlementSubmitting(true);
+        setSettlementFieldErrors({});
+
+        try {
+            const res = await fetch("/api/settlements", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    groupId,
+                    fromUserId: settlementForm.fromUserId,
+                    toUserId: settlementForm.toUserId,
+                    amount: amt,
+                }),
+            });
+
+            if (!res.ok) {
+                const body = await res.json().catch(() => ({}));
+                throw new Error(body.error ?? `HTTP ${res.status}`);
+            }
+
+            setSettlementModalOpen(false);
+            setSettlementForm({ fromUserId: "", toUserId: "", amount: "" });
+            setToast(`Payment recorded successfully!`);
+            fetchData(groupId, true);
+        } catch (err: unknown) {
+            setSettlementFieldErrors({ server: err instanceof Error ? err.message : "Failed to record payment" });
+        } finally {
+            setSettlementSubmitting(false);
+        }
+    };
+
     const balanceColor = (b: number) =>
         b > 0 ? "text-emerald-400" : b < 0 ? "text-red-400" : "text-gray-500";
     const balanceLabel = (b: number) =>
@@ -316,9 +380,16 @@ export default function GroupBalancesPage({
                                     <button
                                         onClick={openMemberModal}
                                         disabled={refreshing}
-                                        className="flex items-center gap-1.5 rounded-lg border border-gray-700 hover:border-gray-500 bg-gray-900 hover:bg-gray-800 disabled:opacity-50 transition-colors px-4 py-2 text-sm font-medium text-gray-300"
+                                        className="rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 py-2 px-4 text-sm font-medium text-white transition-colors disabled:opacity-50"
                                     >
                                         + Add Member
+                                    </button>
+                                    <button
+                                        onClick={openSettlementModal}
+                                        disabled={refreshing}
+                                        className="rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 py-2 px-4 text-sm font-medium text-white transition-colors disabled:opacity-50"
+                                    >
+                                        Record Payment
                                     </button>
                                     <button
                                         onClick={openModal}
@@ -684,6 +755,115 @@ export default function GroupBalancesPage({
                                 >
                                     {memberSubmitting && <Spinner className="w-4 h-4" />}
                                     {memberSubmitting ? "Adding…" : "Add Member"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Record Payment Modal */}
+            {settlementModalOpen && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
+                    onClick={(e) => e.target === e.currentTarget && !settlementSubmitting && setSettlementModalOpen(false)}
+                >
+                    <div className="w-full max-w-sm rounded-2xl border border-gray-800 bg-gray-900 p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-lg font-semibold">Record a Payment</h2>
+                            <button
+                                onClick={() => !settlementSubmitting && setSettlementModalOpen(false)}
+                                disabled={settlementSubmitting}
+                                className="text-gray-500 hover:text-gray-300 transition-colors text-xl leading-none disabled:opacity-40"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleSettlementSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">
+                                    Who paid? <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    value={settlementForm.fromUserId}
+                                    onChange={(e) => {
+                                        setSettlementForm((f) => ({ ...f, fromUserId: e.target.value }));
+                                        if (settlementFieldErrors.fromUserId) setSettlementFieldErrors((fe) => ({ ...fe, fromUserId: undefined }));
+                                    }}
+                                    disabled={settlementSubmitting}
+                                    className={`w-full rounded-lg border bg-gray-800 px-4 py-2.5 text-sm text-white focus:outline-none transition-colors disabled:opacity-50 ${settlementFieldErrors.fromUserId ? "border-red-500 focus:border-red-400" : "border-gray-700 focus:border-indigo-500"
+                                        }`}
+                                >
+                                    <option value="" disabled>Select payer…</option>
+                                    {balanceData?.balances.map((m) => (
+                                        <option key={m.userId} value={m.userId}>{m.name}</option>
+                                    ))}
+                                </select>
+                                {settlementFieldErrors.fromUserId && <p className="mt-1 text-xs text-red-400">{settlementFieldErrors.fromUserId}</p>}
+                            </div>
+
+                            <div>
+                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">
+                                    Who received it? <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    value={settlementForm.toUserId}
+                                    onChange={(e) => {
+                                        setSettlementForm((f) => ({ ...f, toUserId: e.target.value }));
+                                        if (settlementFieldErrors.toUserId) setSettlementFieldErrors((fe) => ({ ...fe, toUserId: undefined }));
+                                    }}
+                                    disabled={settlementSubmitting}
+                                    className={`w-full rounded-lg border bg-gray-800 px-4 py-2.5 text-sm text-white focus:outline-none transition-colors disabled:opacity-50 ${settlementFieldErrors.toUserId ? "border-red-500 focus:border-red-400" : "border-gray-700 focus:border-indigo-500"
+                                        }`}
+                                >
+                                    <option value="" disabled>Select recipient…</option>
+                                    {balanceData?.balances.map((m) => (
+                                        <option key={m.userId} value={m.userId}>{m.name}</option>
+                                    ))}
+                                </select>
+                                {settlementFieldErrors.toUserId && <p className="mt-1 text-xs text-red-400">{settlementFieldErrors.toUserId}</p>}
+                            </div>
+
+                            <div>
+                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">
+                                    Amount (₹) <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    min="0.01"
+                                    step="0.01"
+                                    value={settlementForm.amount}
+                                    onChange={(e) => {
+                                        setSettlementForm((f) => ({ ...f, amount: e.target.value }));
+                                        if (settlementFieldErrors.amount) setSettlementFieldErrors((fe) => ({ ...fe, amount: undefined }));
+                                    }}
+                                    placeholder="0.00"
+                                    disabled={settlementSubmitting}
+                                    className={`w-full rounded-lg border bg-gray-800 px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none transition-colors disabled:opacity-50 ${settlementFieldErrors.amount ? "border-red-500 focus:border-red-400" : "border-gray-700 focus:border-indigo-500"
+                                        }`}
+                                />
+                                {settlementFieldErrors.amount && <p className="mt-1 text-xs text-red-400">{settlementFieldErrors.amount}</p>}
+                            </div>
+
+                            {settlementFieldErrors.server && <p className="text-red-400 text-xs">{settlementFieldErrors.server}</p>}
+
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setSettlementModalOpen(false)}
+                                    disabled={settlementSubmitting}
+                                    className="flex-1 rounded-lg border border-gray-700 py-2.5 text-sm text-gray-400 hover:border-gray-500 hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={settlementSubmitting}
+                                    className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors py-2.5 text-sm font-medium text-white"
+                                >
+                                    {settlementSubmitting && <Spinner className="w-4 h-4" />}
+                                    {settlementSubmitting ? "Recording…" : "Record Payment"}
                                 </button>
                             </div>
                         </form>

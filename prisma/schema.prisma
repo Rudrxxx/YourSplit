@@ -22,6 +22,8 @@ model User {
   groups        GroupMember[]
   expenses      Expense[]      @relation("PaidBy")
   expenseSplits ExpenseSplit[]
+  sentSettlements     Settlement[]   @relation("FromUser")
+  receivedSettlements Settlement[]   @relation("ToUser")
 }
 
 model Group {
@@ -32,6 +34,7 @@ model Group {
   members   GroupMember[]
   expenses  Expense[]
   activities ActivityLog[]
+  settlements Settlement[]
 }
 
 model GroupMember {
@@ -78,4 +81,18 @@ model ActivityLog {
   createdAt DateTime @default(now())
 
   group     Group    @relation(fields: [groupId], references: [id])
+}
+
+model Settlement {
+  id        String   @id @default(uuid())
+  amount    Float
+  createdAt DateTime @default(now())
+
+  groupId    String
+  fromUserId String
+  toUserId   String
+
+  group    Group @relation(fields: [groupId], references: [id])
+  fromUser User  @relation("FromUser", fields: [fromUserId], references: [id])
+  toUser   User  @relation("ToUser", fields: [toUserId], references: [id])
 }

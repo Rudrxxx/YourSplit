@@ -32,6 +32,10 @@ export async function GET(
       include: { splits: true },
     });
 
+    const settlementsRecords = await prisma.settlement.findMany({
+      where: { groupId },
+    });
+
     const balances: Record<string, number> = {};
 
     members.forEach((m) => {
@@ -54,6 +58,16 @@ export async function GET(
 
       if (balances[expense.paidById] !== undefined) {
         balances[expense.paidById] += expense.amount;
+      }
+    }
+
+    // Process recorded settlements (reduces debt)
+    for (const sr of settlementsRecords) {
+      if (balances[sr.fromUserId] !== undefined) {
+        balances[sr.fromUserId] += sr.amount;
+      }
+      if (balances[sr.toUserId] !== undefined) {
+        balances[sr.toUserId] -= sr.amount;
       }
     }
 
