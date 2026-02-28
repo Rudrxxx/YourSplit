@@ -67,11 +67,17 @@ export default function GroupBalancesPage({
     const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Modal state
+    // Expense modal state
     const [modalOpen, setModalOpen] = useState(false);
     const [form, setForm] = useState(defaultForm);
     const [submitting, setSubmitting] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
+
+    // Member modal state
+    const [memberModalOpen, setMemberModalOpen] = useState(false);
+    const [memberForm, setMemberForm] = useState({ name: "", email: "" });
+    const [memberSubmitting, setMemberSubmitting] = useState(false);
+    const [memberFormError, setMemberFormError] = useState<string | null>(null);
 
     // Toast
     const [toast, setToast] = useState<string | null>(null);
@@ -113,6 +119,55 @@ export default function GroupBalancesPage({
         setForm({ ...defaultForm, paidById: balanceData?.balances[0]?.userId ?? "" });
         setFormError(null);
         setModalOpen(true);
+    };
+
+    const openMemberModal = () => {
+        setMemberForm({ name: "", email: "" });
+        setMemberFormError(null);
+        setMemberModalOpen(true);
+    };
+
+    const handleMemberSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!groupId) return;
+        const name = memberForm.name.trim();
+        if (!name) { setMemberFormError("Name is required."); return; }
+        setMemberSubmitting(true);
+        setMemberFormError(null);
+        try {
+            // Step 1: create user (email is required by DB; generate placeholder if blank)
+            const email = memberForm.email.trim()
+                || `${name.toLowerCase().replace(/\s+/g, ".")}@yoursplit.local`;
+            const userRes = await fetch("/api/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email }),
+            });
+            if (!userRes.ok) {
+                const body = await userRes.json().catch(() => ({}));
+                throw new Error(body.error ?? `Users API: HTTP ${userRes.status}`);
+            }
+            const user = await userRes.json();
+
+            // Step 2: add to group
+            const memberRes = await fetch("/api/group-members", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ groupId, userId: user.id }),
+            });
+            if (!memberRes.ok) {
+                const body = await memberRes.json().catch(() => ({}));
+                throw new Error(body.error ?? `Group-members API: HTTP ${memberRes.status}`);
+            }
+
+            setMemberModalOpen(false);
+            setToast(`${name} added to group`);
+            fetchData(groupId, true);
+        } catch (err: unknown) {
+            setMemberFormError(err instanceof Error ? err.message : "Failed to add member");
+        } finally {
+            setMemberSubmitting(false);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -200,14 +255,23 @@ export default function GroupBalancesPage({
                                     <h1 className="text-2xl font-bold tracking-tight">Group Balances</h1>
                                     <p className="text-xs text-gray-600 mt-1 font-mono">{balanceData.groupId}</p>
                                 </div>
-                                <button
-                                    onClick={openModal}
-                                    disabled={refreshing}
-                                    className="flex items-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 disabled:opacity-50 transition-colors px-4 py-2 text-sm font-medium text-white"
-                                >
-                                    {refreshing ? <Spinner className="w-4 h-4" /> : null}
-                                    + Add Expense
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={openMemberModal}
+                                        disabled={refreshing}
+                                        className="flex items-center gap-1.5 rounded-lg border border-gray-700 hover:border-gray-500 bg-gray-900 hover:bg-gray-800 disabled:opacity-50 transition-colors px-4 py-2 text-sm font-medium text-gray-300"
+                                    >
+                                        + Add Member
+                                    </button>
+                                    <button
+                                        onClick={openModal}
+                                        disabled={refreshing}
+                                        className="flex items-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 disabled:opacity-50 transition-colors px-4 py-2 text-sm font-medium text-white"
+                                    >
+                                        {refreshing ? <Spinner className="w-4 h-4" /> : null}
+                                        + Add Expense
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Summary */}
@@ -369,6 +433,77 @@ export default function GroupBalancesPage({
                                 >
                                     {submitting && <Spinner className="w-4 h-4" />}
                                     {submitting ? "Adding…" : "Add Expense"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Add Member Modal */}
+            {memberModalOpen && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
+                    onClick={(e) => e.target === e.currentTarget && !memberSubmitting && setMemberModalOpen(false)}
+                >
+                    <div className="w-full max-w-sm rounded-2xl border border-gray-800 bg-gray-900 p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-lg font-semibold">Add Member</h2>
+                            <button
+                                onClick={() => !memberSubmitting && setMemberModalOpen(false)}
+                                disabled={memberSubmitting}
+                                className="text-gray-500 hover:text-gray-300 transition-colors text-xl leading-none disabled:opacity-40"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleMemberSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">Name</label>
+                                <input
+                                    type="text"
+                                    value={memberForm.name}
+                                    onChange={(e) => setMemberForm((f) => ({ ...f, name: e.target.value }))}
+                                    placeholder="Jane Doe"
+                                    disabled={memberSubmitting}
+                                    autoFocus
+                                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:border-indigo-500 focus:outline-none transition-colors disabled:opacity-50"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">
+                                    Email <span className="normal-case text-gray-600">(optional)</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    value={memberForm.email}
+                                    onChange={(e) => setMemberForm((f) => ({ ...f, email: e.target.value }))}
+                                    placeholder="jane@example.com"
+                                    disabled={memberSubmitting}
+                                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:border-indigo-500 focus:outline-none transition-colors disabled:opacity-50"
+                                />
+                            </div>
+
+                            {memberFormError && <p className="text-red-400 text-xs">{memberFormError}</p>}
+
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setMemberModalOpen(false)}
+                                    disabled={memberSubmitting}
+                                    className="flex-1 rounded-lg border border-gray-700 py-2.5 text-sm text-gray-400 hover:border-gray-500 hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={memberSubmitting}
+                                    className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors py-2.5 text-sm font-medium text-white"
+                                >
+                                    {memberSubmitting && <Spinner className="w-4 h-4" />}
+                                    {memberSubmitting ? "Adding…" : "Add Member"}
                                 </button>
                             </div>
                         </form>
