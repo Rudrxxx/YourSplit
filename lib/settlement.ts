@@ -7,6 +7,8 @@ export interface BalanceEntity {
 export interface SettlementTransaction {
     from: string;
     to: string;
+    fromId: string;
+    toId: string;
     amount: number;
 }
 
@@ -45,6 +47,8 @@ export function calculateSettlements(balances: BalanceEntity[]): SettlementTrans
             settlements.push({
                 from: debtor.name,
                 to: creditor.name,
+                fromId: debtor.userId,
+                toId: creditor.userId,
                 amount: amount / 100, // Revert to standard currency decimal
             });
         }
