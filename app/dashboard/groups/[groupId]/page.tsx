@@ -222,51 +222,70 @@ export default function GroupBalancesPage({
                                 </div>
                             </div>
 
-                            {/* Members */}
-                            <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Members</p>
-                            <ul className="space-y-3 mb-8">
-                                {balanceData.balances.map((member) => (
-                                    <li
-                                        key={member.userId}
-                                        className="flex items-center justify-between rounded-xl border border-gray-800 bg-gray-900 px-5 py-4"
+                            {/* No expenses empty state OR member/settlement sections */}
+                            {balanceData.totalExpenses === 0 ? (
+                                <div className="rounded-2xl border border-dashed border-gray-700 bg-gray-900/50 px-8 py-14 text-center">
+                                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-gray-700 bg-gray-800 text-2xl">
+                                        💸
+                                    </div>
+                                    <h2 className="text-base font-semibold text-white mb-1">No expenses yet</h2>
+                                    <p className="text-sm text-gray-500 max-w-xs mx-auto">
+                                        Add the first expense to start tracking who owes what.
+                                    </p>
+                                    <button
+                                        onClick={openModal}
+                                        className="mt-5 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors px-4 py-2 text-sm font-medium text-white"
                                     >
-                                        <div>
-                                            <p className="font-medium text-white">{member.name}</p>
-                                            <p className={`text-sm mt-0.5 ${balanceColor(member.balance)}`}>
-                                                {balanceLabel(member.balance)}
-                                            </p>
-                                        </div>
-                                        <span className={`text-lg font-semibold tabular-nums ${balanceColor(member.balance)}`}>
-                                            {member.balance > 0 ? "+" : ""}₹{member.balance.toFixed(2)}
-                                        </span>
-                                    </li>
-                                ))}
-                            </ul>
-
-                            {/* Settlement plan */}
-                            <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Settlement Plan</p>
-                            {settlementData.settlements.length === 0 ? (
-                                <div className="rounded-xl border border-gray-800 bg-gray-900 px-5 py-6 text-center text-gray-500 text-sm">
-                                    ✓ All settled up
+                                        + Add First Expense
+                                    </button>
                                 </div>
                             ) : (
-                                <ul className="space-y-3">
-                                    {settlementData.settlements.map((s, i) => (
-                                        <li
-                                            key={i}
-                                            className="flex items-center justify-between rounded-xl border border-gray-800 bg-gray-900 px-5 py-4"
-                                        >
-                                            <div className="flex items-center gap-2 text-sm">
-                                                <span className="font-medium text-red-400">{s.from}</span>
-                                                <span className="text-gray-600">→</span>
-                                                <span className="font-medium text-emerald-400">{s.to}</span>
-                                            </div>
-                                            <span className="text-white font-semibold tabular-nums">
-                                                ₹{s.amount.toFixed(2)}
-                                            </span>
-                                        </li>
-                                    ))}
-                                </ul>
+                                <>
+                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Members</p>
+                                    <ul className="space-y-3 mb-8">
+                                        {balanceData.balances.map((member) => (
+                                            <li
+                                                key={member.userId}
+                                                className="flex items-center justify-between rounded-xl border border-gray-800 bg-gray-900 px-5 py-4"
+                                            >
+                                                <div>
+                                                    <p className="font-medium text-white">{member.name}</p>
+                                                    <p className={`text-sm mt-0.5 ${balanceColor(member.balance)}`}>
+                                                        {balanceLabel(member.balance)}
+                                                    </p>
+                                                </div>
+                                                <span className={`text-lg font-semibold tabular-nums ${balanceColor(member.balance)}`}>
+                                                    {member.balance > 0 ? "+" : ""}₹{member.balance.toFixed(2)}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+
+                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Settlement Plan</p>
+                                    {settlementData.settlements.length === 0 ? (
+                                        <div className="rounded-xl border border-gray-800 bg-gray-900 px-5 py-6 text-center text-gray-500 text-sm">
+                                            ✓ All settled up
+                                        </div>
+                                    ) : (
+                                        <ul className="space-y-3">
+                                            {settlementData.settlements.map((s, i) => (
+                                                <li
+                                                    key={i}
+                                                    className="flex items-center justify-between rounded-xl border border-gray-800 bg-gray-900 px-5 py-4"
+                                                >
+                                                    <div className="flex items-center gap-2 text-sm">
+                                                        <span className="font-medium text-red-400">{s.from}</span>
+                                                        <span className="text-gray-600">→</span>
+                                                        <span className="font-medium text-emerald-400">{s.to}</span>
+                                                    </div>
+                                                    <span className="text-white font-semibold tabular-nums">
+                                                        ₹{s.amount.toFixed(2)}
+                                                    </span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </>
                             )}
                         </div>
                     )}
