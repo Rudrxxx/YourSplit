@@ -313,6 +313,26 @@ export default function GroupBalancesPage({
                                 </div>
                             </div>
 
+                            {/* Insights strip */}
+                            <div className="rounded-xl border border-gray-800 bg-gray-900/60 px-5 py-4 mb-6 grid grid-cols-3 divide-x divide-gray-800">
+                                <div className="pr-4">
+                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-0.5">Members</p>
+                                    <p className="text-lg font-semibold">{balanceData.balances.length}</p>
+                                </div>
+                                <div className="px-4">
+                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-0.5">Expenses</p>
+                                    <p className="text-lg font-semibold">{expenses.length}</p>
+                                </div>
+                                <div className="pl-4">
+                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-0.5">Last Expense</p>
+                                    <p className="text-lg font-semibold">
+                                        {expenses.length > 0
+                                            ? new Date(expenses[0].createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })
+                                            : "—"}
+                                    </p>
+                                </div>
+                            </div>
+
                             {/* No expenses empty state OR member/settlement sections */}
                             {balanceData.totalExpenses === 0 ? (
                                 <div className="rounded-2xl border border-dashed border-gray-700 bg-gray-900/50 px-8 py-14 text-center">
