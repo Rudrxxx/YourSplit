@@ -376,7 +376,18 @@ export default function GroupBalancesPage({
                                     <h1 className="text-2xl font-bold tracking-tight">Group Balances</h1>
                                     <p className="text-xs text-gray-600 mt-1 font-mono">{balanceData.groupId}</p>
                                 </div>
-                                <div className="flex gap-2">
+                                <div className="flex flex-wrap items-center justify-end gap-2">
+                                    <a
+                                        href={`/api/groups/${groupId}/export`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-900 hover:bg-gray-800 py-2 px-4 text-sm font-medium text-gray-300 transition-colors"
+                                    >
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                        </svg>
+                                        Export
+                                    </a>
                                     <button
                                         onClick={openMemberModal}
                                         disabled={refreshing}
