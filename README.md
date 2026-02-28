@@ -67,3 +67,49 @@ All financial data is stored in PostgreSQL using Prisma ORM.
 
 ### Architecture Diagram
 (To be added before final submission)
+
+---
+
+## 5. Database Design
+
+### ER Diagram
+(To be added before final submission)
+
+### ER Diagram Description
+
+The system consists of the following core entities:
+
+1. User  
+   - id (UUID)  
+   - name  
+   - email  
+   - createdAt  
+
+2. Group  
+   - id (UUID)  
+   - name  
+   - createdAt  
+
+3. Expense  
+   - id (UUID)  
+   - groupId (Foreign Key)  
+   - paidById (Foreign Key → User)  
+   - amount (Integer, stored in cents)  
+   - createdAt  
+
+4. Settlement  
+   - id (UUID)  
+   - groupId (Foreign Key)  
+   - fromUser  
+   - toUser  
+   - amount (Integer, stored in cents)  
+   - optimized (Boolean)  
+   - createdAt  
+
+Relationships:
+- A Group has many Users (many-to-many).
+- A Group has many Expenses.
+- An Expense belongs to one Group.
+- An Expense is paid by one User.
+- Settlements represent optimized transactions between users.
+
