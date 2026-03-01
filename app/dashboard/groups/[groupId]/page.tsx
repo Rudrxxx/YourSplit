@@ -87,6 +87,7 @@ export default function GroupBalancesPage({
     const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [activities, setActivities] = useState<ActivityLog[]>([]);
+    const [viewMode, setViewMode] = useState<"list" | "graph">("list");
 
     // Expense modal state
     const [modalOpen, setModalOpen] = useState(false);
@@ -522,13 +523,33 @@ export default function GroupBalancesPage({
                                         ))}
                                     </ul>
 
-                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Settlement Plan</p>
-                                    {settlementData.settlements.length === 0 ? (
-                                        <div className="rounded-xl border border-gray-800/60 bg-emerald-950/10 px-5 py-6 text-center text-emerald-500/80 text-sm font-medium">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <p className="text-xs text-gray-500 uppercase tracking-widest">Settlement Plan</p>
+                                        <div className="flex items-center gap-1 bg-gray-900/60 p-1 rounded-lg border border-gray-800/80">
+                                            <button
+                                                onClick={() => setViewMode("list")}
+                                                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${viewMode === "list" ? "bg-gray-800 text-white shadow-sm ring-1 ring-gray-700/50" : "text-gray-500 hover:text-gray-300"}`}
+                                            >
+                                                List View
+                                            </button>
+                                            <button
+                                                onClick={() => setViewMode("graph")}
+                                                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${viewMode === "graph" ? "bg-indigo-900/60 text-indigo-100 shadow-sm ring-1 ring-indigo-700/50" : "text-gray-500 hover:text-indigo-300"}`}
+                                            >
+                                                Graph View
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {viewMode === "graph" ? (
+                                        <div className="mt-2 animate-in fade-in zoom-in-95 duration-300">
+                                            <DebtGraph groupId={groupId as string} />
+                                        </div>
+                                    ) : settlementData.settlements.length === 0 ? (
+                                        <div className="mt-2 rounded-xl border border-gray-800/60 bg-emerald-950/10 px-5 py-6 text-center text-emerald-500/80 text-sm font-medium animate-in fade-in zoom-in-95 duration-300">
                                             ✓ All settled up securely
                                         </div>
                                     ) : (
-                                        <ul className="space-y-3">
+                                        <ul className="space-y-3 mt-2 animate-in fade-in zoom-in-95 duration-300">
                                             {settlementData.settlements.map((s, i) => (
                                                 <li
                                                     key={i}
@@ -546,11 +567,6 @@ export default function GroupBalancesPage({
                                             ))}
                                         </ul>
                                     )}
-
-                                    <div className="pt-8">
-                                        <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Debt Graph</p>
-                                        <DebtGraph groupId={groupId as string} />
-                                    </div>
                                 </>
                             )}
 
