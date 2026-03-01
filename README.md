@@ -261,9 +261,6 @@ These approaches do not guarantee minimal transactions.
 - GET /api/groups/:id/optimize  
   Apply minimum cash flow optimization
 
-### API Testing Screenshots
-(To be added after backend implementation using Thunder Client / Postman)
-
 ---
 
 ## 10. Module-wise Development & Deliverables
@@ -316,8 +313,9 @@ These approaches do not guarantee minimal transactions.
 
 ## 12. Demo & Video
 
-- Live Demo Link: (To be added after deployment)
-- Demo Video Link: (To be added before final submission)
+- Live Demo Link: https://your-split.vercel.app/
+- Demo Video Link: https://drive.google.com/file/d/1DG2eCPQ9MJD4HLuA1BGa_H6WAkU3PiIq/view
+- Presentation Link: https://drive.google.com/file/d/12XWw09SKh2D51DSApf6cPm63_X12iAZK/view
 - GitHub Repository: https://github.com/Rudrxxx/YourSplit
 
 ---
