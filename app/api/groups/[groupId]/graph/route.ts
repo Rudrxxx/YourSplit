@@ -38,6 +38,8 @@ export async function GET(
             totalSpent[member.userId] = 0;
         });
 
+        const rawEdges: { from: string; to: string; amount: number }[] = [];
+
         for (const expense of expenses) {
             if (expense.splits && expense.splits.length > 0) {
                 for (const split of expense.splits) {
@@ -47,12 +49,29 @@ export async function GET(
                     if (totalSpent[split.userId] !== undefined) {
                         totalSpent[split.userId] += split.amount;
                     }
+                    // Avoid self-edges
+                    if (split.userId !== expense.paidById) {
+                        rawEdges.push({
+                            from: split.userId,
+                            to: expense.paidById,
+                            amount: Number(split.amount.toFixed(2))
+                        });
+                    }
                 }
             } else {
                 const splitAmount = expense.amount / members.length;
                 for (const member of members) {
                     balances[member.userId] -= splitAmount;
                     totalSpent[member.userId] += splitAmount;
+
+                    // Avoid self-edges
+                    if (member.userId !== expense.paidById) {
+                        rawEdges.push({
+                            from: member.userId,
+                            to: expense.paidById,
+                            amount: Number(splitAmount.toFixed(2))
+                        });
+                    }
                 }
             }
 
@@ -68,6 +87,14 @@ export async function GET(
             if (balances[settlement.toUserId] !== undefined) {
                 balances[settlement.toUserId] -= settlement.amount;
             }
+
+            // Raw settlements reduce existing raw debt lines.
+            // For visual continuity, we map them as direct negative edges (or reverse edges).
+            rawEdges.push({
+                from: settlement.fromUserId,
+                to: settlement.toUserId,
+                amount: Number(settlement.amount.toFixed(2))
+            });
         }
 
         const balanceArray = members.map((member) => ({
@@ -86,13 +113,13 @@ export async function GET(
             totalSpent: b.totalSpent
         }));
 
-        const edges = settlementPlan.map((s) => ({
+        const optimizedEdges = settlementPlan.map((s) => ({
             from: s.fromId,
             to: s.toId,
             amount: s.amount,
         }));
 
-        return NextResponse.json({ nodes, edges });
+        return NextResponse.json({ nodes, optimizedEdges, rawEdges });
     } catch (error) {
         console.error("Graph generation error:", error);
         return NextResponse.json({ error: "Failed to generate graph" }, { status: 500 });
