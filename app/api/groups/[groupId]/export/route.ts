@@ -51,38 +51,38 @@ export async function GET(
 
         let totalExpenses = 0;
         for (const expense of expenses) {
-            totalExpenses += expense.amount;
+            totalExpenses += Number(expense.amount);
             if (expense.splits && expense.splits.length > 0) {
                 for (const split of expense.splits) {
                     if (balances[split.userId] !== undefined) {
-                        balances[split.userId] -= split.amount;
+                        balances[split.userId] -= Number(split.amount);
                     }
                 }
             } else {
-                const splitAmount = expense.amount / members.length;
+                const splitAmount = Number(expense.amount) / members.length;
                 members.forEach((m) => {
                     balances[m.userId] -= splitAmount;
                 });
             }
 
             if (balances[expense.paidById] !== undefined) {
-                balances[expense.paidById] += expense.amount;
+                balances[expense.paidById] += Number(expense.amount);
             }
         }
 
         for (const sr of settlementsRecords) {
             if (balances[sr.fromUserId] !== undefined) {
-                balances[sr.fromUserId] += sr.amount;
+                balances[sr.fromUserId] += Number(sr.amount);
             }
             if (balances[sr.toUserId] !== undefined) {
-                balances[sr.toUserId] -= sr.amount;
+                balances[sr.toUserId] -= Number(sr.amount);
             }
         }
 
         const balanceArray = members.map((m) => ({
             userId: m.userId,
             name: m.user.name,
-            balance: Number(balances[m.userId].toFixed(2)),
+            balance: Number(Number(balances[m.userId]).toFixed(2)),
         }));
 
         const settlementPlan = calculateSettlements(balanceArray);
@@ -172,7 +172,7 @@ export async function GET(
         } else {
             settlementPlan.forEach((sp) => {
                 checkPageBreak(10);
-                doc.text(`• ${sp.from} needs to pay INR ${sp.amount.toFixed(2)} to ${sp.to}`, 25, y);
+                doc.text(`• ${sp.from} needs to pay INR ${Number(sp.amount).toFixed(2)} to ${sp.to}`, 25, y);
                 y += 6;
             });
         }
@@ -194,7 +194,7 @@ export async function GET(
             expenses.forEach((e) => {
                 checkPageBreak(10);
                 const date = new Date(e.createdAt).toLocaleDateString();
-                doc.text(`[${date}] ${e.description} - INR ${e.amount.toFixed(2)} (Paid by ${e.paidBy?.name || "Unknown"})`, 25, y);
+                doc.text(`[${date}] ${e.description} - INR ${Number(e.amount).toFixed(2)} (Paid by ${e.paidBy?.name || "Unknown"})`, 25, y);
                 y += 6;
             });
         }
@@ -213,7 +213,7 @@ export async function GET(
             settlementsRecords.forEach((sr) => {
                 checkPageBreak(10);
                 const date = new Date(sr.createdAt).toLocaleDateString();
-                doc.text(`[${date}] ${sr.fromUser?.name} paid ${sr.toUser?.name} INR ${sr.amount.toFixed(2)}`, 25, y);
+                doc.text(`[${date}] ${sr.fromUser?.name} paid ${sr.toUser?.name} INR ${Number(sr.amount).toFixed(2)}`, 25, y);
                 y += 6;
             });
         }

@@ -44,22 +44,22 @@ export async function GET(
             if (expense.splits && expense.splits.length > 0) {
                 for (const split of expense.splits) {
                     if (balances[split.userId] !== undefined) {
-                        balances[split.userId] -= split.amount;
+                        balances[split.userId] -= Number(split.amount);
                     }
                     if (totalSpent[split.userId] !== undefined) {
-                        totalSpent[split.userId] += split.amount;
+                        totalSpent[split.userId] += Number(split.amount);
                     }
                     // Avoid self-edges
                     if (split.userId !== expense.paidById) {
                         rawEdges.push({
                             from: split.userId,
                             to: expense.paidById,
-                            amount: Number(split.amount.toFixed(2))
+                            amount: Number(Number(split.amount).toFixed(2))
                         });
                     }
                 }
             } else {
-                const splitAmount = expense.amount / members.length;
+                const splitAmount = Number(expense.amount) / members.length;
                 for (const member of members) {
                     balances[member.userId] -= splitAmount;
                     totalSpent[member.userId] += splitAmount;
@@ -76,16 +76,16 @@ export async function GET(
             }
 
             if (balances[expense.paidById] !== undefined) {
-                balances[expense.paidById] += expense.amount;
+                balances[expense.paidById] += Number(expense.amount);
             }
         }
 
         for (const settlement of settlements) {
             if (balances[settlement.fromUserId] !== undefined) {
-                balances[settlement.fromUserId] += settlement.amount;
+                balances[settlement.fromUserId] += Number(settlement.amount);
             }
             if (balances[settlement.toUserId] !== undefined) {
-                balances[settlement.toUserId] -= settlement.amount;
+                balances[settlement.toUserId] -= Number(settlement.amount);
             }
 
             // Raw settlements reduce existing raw debt lines.
@@ -93,15 +93,15 @@ export async function GET(
             rawEdges.push({
                 from: settlement.fromUserId,
                 to: settlement.toUserId,
-                amount: Number(settlement.amount.toFixed(2))
+                amount: Number(Number(settlement.amount).toFixed(2))
             });
         }
 
         const balanceArray = members.map((member) => ({
             userId: member.userId,
             name: member.user.name,
-            balance: Number(balances[member.userId].toFixed(2)),
-            totalSpent: Number(totalSpent[member.userId].toFixed(2)),
+            balance: Number(Number(balances[member.userId]).toFixed(2)),
+            totalSpent: Number(Number(totalSpent[member.userId]).toFixed(2)),
         }));
 
         const settlementPlan = calculateSettlements(balanceArray);

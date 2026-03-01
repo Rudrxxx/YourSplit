@@ -47,28 +47,28 @@ export async function GET(
       if (expense.splits && expense.splits.length > 0) {
         for (const split of expense.splits) {
           if (balances[split.userId] !== undefined) {
-            balances[split.userId] -= split.amount;
+            balances[split.userId] -= Number(split.amount);
           }
         }
       } else {
-        const splitAmount = expense.amount / members.length;
+        const splitAmount = Number(expense.amount) / members.length;
         members.forEach((m) => {
           balances[m.userId] -= splitAmount;
         });
       }
 
       if (balances[expense.paidById] !== undefined) {
-        balances[expense.paidById] += expense.amount;
+        balances[expense.paidById] += Number(expense.amount);
       }
     }
 
     // Process recorded settlements (reduces debt)
     for (const sr of settlementsRecords) {
       if (balances[sr.fromUserId] !== undefined) {
-        balances[sr.fromUserId] += sr.amount;
+        balances[sr.fromUserId] += Number(sr.amount);
       }
       if (balances[sr.toUserId] !== undefined) {
-        balances[sr.toUserId] -= sr.amount;
+        balances[sr.toUserId] -= Number(sr.amount);
       }
     }
 
@@ -76,7 +76,7 @@ export async function GET(
     const balanceArray = members.map((m) => ({
       userId: m.userId,
       name: m.user.name,
-      balance: Number(balances[m.userId].toFixed(2)),
+      balance: Number(Number(balances[m.userId]).toFixed(2)),
     }));
 
     // Calculate optimal settlements using generic utility
