@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState, useMemo } from "react";
+import DebtGraph from "@/components/DebtGraph";
 
 interface Balance {
     userId: string;
@@ -545,6 +546,11 @@ export default function GroupBalancesPage({
                                             ))}
                                         </ul>
                                     )}
+
+                                    <div className="pt-8">
+                                        <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Debt Graph</p>
+                                        <DebtGraph groupId={groupId as string} />
+                                    </div>
                                 </>
                             )}
 
