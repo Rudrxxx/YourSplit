@@ -168,7 +168,7 @@ export default function GroupBalancesPage({
             if (!totals[exp.paidById]) {
                 totals[exp.paidById] = { name: exp.paidBy?.name || "Unknown", amount: 0 };
             }
-            totals[exp.paidById].amount += exp.amount;
+            totals[exp.paidById].amount += Number(exp.amount);
         });
         const leaderboard = Object.values(totals).sort((a, b) => b.amount - a.amount);
         return {
@@ -424,7 +424,7 @@ export default function GroupBalancesPage({
                                         </svg>
                                         Total Expenses
                                     </p>
-                                    <p className="text-3xl font-bold tracking-tight text-white">₹{balanceData.totalExpenses.toFixed(2)}</p>
+                                    <p className="text-3xl font-bold tracking-tight text-white">₹{Number(balanceData.totalExpenses).toFixed(2)}</p>
                                 </div>
                                 <div className="border-l border-gray-800/60 pl-6">
                                     <p className="text-xs text-gray-400 font-semibold uppercase tracking-widest mb-1.5 flex items-center gap-2">
@@ -433,7 +433,7 @@ export default function GroupBalancesPage({
                                         </svg>
                                         Per Person
                                     </p>
-                                    <p className="text-3xl font-bold tracking-tight text-gray-100">₹{balanceData.perPersonShare.toFixed(2)}</p>
+                                    <p className="text-3xl font-bold tracking-tight text-gray-100">₹{Number(balanceData.perPersonShare).toFixed(2)}</p>
                                 </div>
                             </div>
 
@@ -486,7 +486,7 @@ export default function GroupBalancesPage({
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="text-xs text-indigo-300/80 mb-0.5">Total Spent</p>
-                                                    <p className="text-indigo-400 font-bold text-xl">₹{analytics.topContributor.amount.toFixed(2)}</p>
+                                                    <p className="text-indigo-400 font-bold text-xl">₹{Number(analytics.topContributor.amount).toFixed(2)}</p>
                                                 </div>
                                             </div>
                                         )}
@@ -497,7 +497,7 @@ export default function GroupBalancesPage({
                                                         <span className="text-sm text-gray-500 font-medium w-4">{idx + 1}.</span>
                                                         <span className="text-gray-200">{user.name}</span>
                                                     </div>
-                                                    <span className="text-white font-medium">₹{user.amount.toFixed(2)}</span>
+                                                    <span className="text-white font-medium">₹{Number(user.amount).toFixed(2)}</span>
                                                 </li>
                                             ))}
                                         </ul>
@@ -517,7 +517,7 @@ export default function GroupBalancesPage({
                                                     </p>
                                                 </div>
                                                 <span className={`text-lg font-bold tabular-nums tracking-tight ${balanceColor(member.balance)}`}>
-                                                    {member.balance > 0 ? "+" : ""}₹{member.balance.toFixed(2)}
+                                                    {Number(member.balance) > 0 ? "+" : ""}₹{Number(member.balance).toFixed(2)}
                                                 </span>
                                             </li>
                                         ))}
@@ -561,7 +561,7 @@ export default function GroupBalancesPage({
                                                         <span className="font-semibold text-emerald-400">{s.to}</span>
                                                     </div>
                                                     <span className="text-white font-bold tracking-tight tabular-nums">
-                                                        ₹{s.amount.toFixed(2)}
+                                                        ₹{Number(s.amount).toFixed(2)}
                                                     </span>
                                                 </li>
                                             ))}
