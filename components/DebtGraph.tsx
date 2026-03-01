@@ -1,15 +1,18 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback, memo } from "react";
 import dynamic from "next/dynamic";
 
 // Dynamically import react-force-graph-2d to prevent SSR issues with canvas/window
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
     ssr: false,
     loading: () => (
-        <div className="flex h-full w-full items-center justify-center text-gray-500 text-sm">
-            <div className="h-6 w-6 rounded-full border-t-2 border-b-2 border-indigo-500 animate-spin mr-3"></div>
-            Loading interactive visualization...
+        <div className="h-[400px] w-full rounded-2xl border border-gray-800 bg-[#0a0a0e] flex flex-col items-center justify-center gap-4 shadow-inner">
+            <div className="relative">
+                <div className="h-12 w-12 rounded-full border-2 border-gray-800"></div>
+                <div className="absolute inset-0 h-12 w-12 rounded-full border-t-2 border-indigo-500 animate-spin"></div>
+            </div>
+            <p className="text-xs font-medium text-gray-500 tracking-widest uppercase">Initializing Graph Engine</p>
         </div>
     )
 });
@@ -27,8 +30,8 @@ interface Edge {
     amount: number;
 }
 
-export default function DebtGraph({ groupId }: { groupId: string }) {
-    const [graphData, setGraphData] = useState<{ nodes: Record<string, unknown>[]; optimizedLinks: Record<string, unknown>[], rawLinks: Record<string, unknown>[] } | null>(null);
+function DebtGraphInner({ groupId }: { groupId: string }) {
+    const [graphData, setGraphData] = useState<{ nodes: Record<string, unknown>[]; links: Record<string, unknown>[], optimizedLinks: Record<string, unknown>[], rawLinks: Record<string, unknown>[] } | null>(null);
     const [viewMode, setViewMode] = useState<"optimized" | "raw">("optimized");
     const [loading, setLoading] = useState(true);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -55,17 +58,20 @@ export default function DebtGraph({ groupId }: { groupId: string }) {
                     source: e.from,
                     target: e.to,
                     amount: e.amount,
-                    name: `₹${e.amount.toFixed(2)}`
+                    name: `₹${e.amount.toFixed(2)}`,
+                    type: "optimized"
                 }));
 
                 const rawLinks = data.rawEdges.map((e: Edge) => ({
                     source: e.from,
                     target: e.to,
                     amount: e.amount,
-                    name: `₹${e.amount.toFixed(2)}`
+                    name: `₹${e.amount.toFixed(2)}`,
+                    type: "raw"
                 }));
 
-                setGraphData({ nodes, optimizedLinks, rawLinks });
+                // Merging links allows D3 to track both simultaneously for smooth physical transitions
+                setGraphData({ nodes, optimizedLinks, rawLinks, links: [...optimizedLinks, ...rawLinks] });
             } catch (err) {
                 console.error(err);
             } finally {
@@ -98,18 +104,43 @@ export default function DebtGraph({ groupId }: { groupId: string }) {
         };
     }, []);
 
-    // Color logic keeping consistent with dark theme
-    const getNodeColor = (node: Record<string, unknown>) => {
+    // Stable node color callback — prevents new function allocation on every render
+    const getNodeColor = useCallback((node: Record<string, unknown>) => {
         const balance = node.balance as number;
-        if (balance > 0) return "#34d399"; // emerald-400 equivalent for positive
-        if (balance < 0) return "#f87171"; // red-400 equivalent for negative
-        return "#9ca3af"; // gray-400 for 0 balance
-    };
+        if (balance > 0) return "#34d399"; // emerald-400 for positive
+        if (balance < 0) return "#f87171"; // red-400 for negative
+        return "#9ca3af"; // gray-400 for neutral
+    }, []);
+
+    // Memoize the active graph object — only recomputes when data or mode changes
+    const activeGraph = useMemo(() => {
+        if (!graphData) return null;
+        return { nodes: graphData.nodes, links: graphData.links };
+    }, [graphData]);
+
+    // Stable link props — prevents ForceGraph2D re-mounting on every render
+    const getLinkColor = useCallback((link: Record<string, unknown>) =>
+        link.type === viewMode ? "rgba(75, 85, 99, 0.4)" : "rgba(0,0,0,0)"
+        , [viewMode]);
+
+    const getLinkWidth = useCallback((link: Record<string, unknown>) =>
+        link.type === viewMode ? Math.max(1, Math.pow(link.amount as number, 0.25)) : 0
+        , [viewMode]);
+
+    const getLinkArrowLength = useCallback((link: Record<string, unknown>) =>
+        link.type === viewMode ? Math.max(4, Math.pow(link.amount as number, 0.25) * 1.5) : 0
+        , [viewMode]);
 
     if (loading) {
         return (
-            <div className="h-[400px] w-full rounded-2xl border border-gray-800 bg-gray-900/40 flex items-center justify-center animate-pulse shadow-inner">
-                <div className="h-8 w-8 rounded-full border-t-2 border-b-2 border-indigo-500 animate-spin"></div>
+            <div className="rounded-2xl border border-gray-800 bg-[#0a0a0e] shadow-inner overflow-hidden">
+                <div className="h-[400px] flex flex-col items-center justify-center gap-4">
+                    <div className="relative">
+                        <div className="h-12 w-12 rounded-full border-2 border-gray-800"></div>
+                        <div className="absolute inset-0 h-12 w-12 rounded-full border-t-2 border-indigo-500 animate-spin"></div>
+                    </div>
+                    <p className="text-xs font-medium text-gray-500 tracking-widest uppercase">Loading Debt Graph</p>
+                </div>
             </div>
         );
     }
@@ -148,10 +179,7 @@ export default function DebtGraph({ groupId }: { groupId: string }) {
                 <ForceGraph2D
                     width={dimensions.width}
                     height={dimensions.height}
-                    graphData={{
-                        nodes: graphData.nodes,
-                        links: viewMode === "optimized" ? graphData.optimizedLinks : graphData.rawLinks
-                    }}
+                    graphData={activeGraph ?? { nodes: [], links: [] }}
                     nodeLabel={(node: Record<string, unknown>) => {
                         const balance = node.balance as number;
                         const spent = node.totalSpent as number;
@@ -175,9 +203,9 @@ export default function DebtGraph({ groupId }: { groupId: string }) {
                     }}
                     nodeColor={getNodeColor}
                     nodeRelSize={5}
-                    linkColor={() => "rgba(75, 85, 99, 0.4)"}
-                    linkWidth={(link: Record<string, unknown>) => Math.max(1, Math.pow(link.amount as number, 0.25))}
-                    linkDirectionalArrowLength={(link: Record<string, unknown>) => Math.max(4, Math.pow(link.amount as number, 0.25) * 1.5)}
+                    linkColor={getLinkColor}
+                    linkWidth={getLinkWidth}
+                    linkDirectionalArrowLength={getLinkArrowLength}
                     linkDirectionalArrowRelPos={1}
                     d3VelocityDecay={0.2}
                     d3AlphaDecay={0.02}
@@ -189,6 +217,9 @@ export default function DebtGraph({ groupId }: { groupId: string }) {
 
                         // ignore unbound links
                         if (typeof start !== "object" || typeof end !== "object") return;
+
+                        // Hide labels for the inactive mode
+                        if (link.type !== viewMode) return;
 
                         // calculate label positioning
                         const textPos = {
@@ -262,3 +293,7 @@ export default function DebtGraph({ groupId }: { groupId: string }) {
         </div>
     );
 }
+
+// Wrap in memo to prevent re-renders when parent state unrelated to groupId changes
+const DebtGraph = memo(DebtGraphInner);
+export default DebtGraph;
