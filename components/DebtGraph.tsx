@@ -231,6 +231,34 @@ export default function DebtGraph({ groupId }: { groupId: string }) {
                     }}
                 />
             </div>
+
+            {graphData && (
+                <div className="mt-4 p-5 rounded-2xl border border-gray-800 bg-gray-900/40 shadow-inner">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 mb-4">
+                        <div className="flex flex-col">
+                            <span className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-1">Raw Transactions</span>
+                            <span className="text-2xl font-bold text-white tabular-nums">{graphData.rawLinks.length}</span>
+                        </div>
+                        <div className="hidden sm:block w-px h-10 bg-gray-800"></div>
+                        <div className="flex flex-col">
+                            <span className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-1">Optimized Transactions</span>
+                            <span className="text-2xl font-bold text-emerald-400 tabular-nums">{graphData.optimizedLinks.length}</span>
+                        </div>
+                        <div className="hidden sm:block w-px h-10 bg-gray-800"></div>
+                        <div className="flex flex-col">
+                            <span className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-1">Reduction</span>
+                            <span className="text-2xl font-bold text-indigo-400 tabular-nums">
+                                {graphData.rawLinks.length > 0
+                                    ? Math.round(((graphData.rawLinks.length - graphData.optimizedLinks.length) / graphData.rawLinks.length) * 100)
+                                    : 0}%
+                            </span>
+                        </div>
+                    </div>
+                    <p className="text-gray-400 text-sm leading-relaxed border-t border-gray-800/80 pt-4">
+                        The optimization algorithm matches largest creditors with largest debtors to minimize transaction count.
+                    </p>
+                </div>
+            )}
         </div>
     );
 }
