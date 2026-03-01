@@ -18,6 +18,7 @@ interface Node {
     id: string;
     name: string;
     balance: number;
+    totalSpent: number;
 }
 
 interface Edge {
@@ -44,8 +45,9 @@ export default function DebtGraph({ groupId }: { groupId: string }) {
                     id: n.id,
                     name: n.name,
                     balance: n.balance,
-                    // Val is node relative size
-                    val: Math.max(1, Math.abs(n.balance) / 500)
+                    totalSpent: n.totalSpent,
+                    // Val is node relative size based on total spent volume
+                    val: Math.max(1.5, Math.pow(n.totalSpent, 0.45) / 2)
                 }));
 
                 const links = data.edges.map((e: Edge) => ({
@@ -119,13 +121,35 @@ export default function DebtGraph({ groupId }: { groupId: string }) {
                 width={dimensions.width}
                 height={dimensions.height}
                 graphData={graphData}
-                nodeLabel="name"
+                nodeLabel={(node: Record<string, unknown>) => {
+                    const balance = node.balance as number;
+                    const spent = node.totalSpent as number;
+                    const statusClass = balance > 0 ? "text-emerald-400" : balance < 0 ? "text-red-400" : "text-gray-400";
+                    const statusText = balance > 0 ? "Gets back" : balance < 0 ? "Owes" : "Settled up";
+                    const formattedBalance = balance === 0 ? "" : `₹${Math.abs(balance).toFixed(2)}`;
+
+                    return `
+                        <div class="bg-gray-900 border border-gray-800 rounded-lg p-3 shadow-xl backdrop-blur-sm shadow-black/50 text-xs min-w-[140px]">
+                            <p class="font-bold text-white text-base mb-1.5">${node.name as string}</p>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-gray-500 font-medium">Spent</span>
+                                <span class="font-semibold text-gray-200">₹${spent.toFixed(2)}</span>
+                            </div>
+                            <div class="flex items-center justify-between pt-1 border-t border-gray-800/80">
+                                <span class="text-gray-500 font-medium">${statusText}</span>
+                                <span class="font-bold ${statusClass}">${balance > 0 ? '+' : balance < 0 ? '-' : ''}${formattedBalance}</span>
+                            </div>
+                        </div>
+                    `;
+                }}
                 nodeColor={getNodeColor}
-                nodeRelSize={6}
-                linkColor={() => "rgba(75, 85, 99, 0.6)"}
-                linkDirectionalArrowLength={6}
+                nodeRelSize={5}
+                linkColor={() => "rgba(75, 85, 99, 0.4)"}
+                linkWidth={(link: Record<string, unknown>) => Math.max(1, Math.pow(link.amount as number, 0.25))}
+                linkDirectionalArrowLength={(link: Record<string, unknown>) => Math.max(4, Math.pow(link.amount as number, 0.25) * 1.5)}
                 linkDirectionalArrowRelPos={1}
-                d3VelocityDecay={0.3}
+                d3VelocityDecay={0.2}
+                d3AlphaDecay={0.02}
                 backgroundColor="transparent"
                 linkCanvasObjectMode={() => "after"}
                 linkCanvasObject={(link: Record<string, unknown>, ctx: CanvasRenderingContext2D, globalScale: number) => {

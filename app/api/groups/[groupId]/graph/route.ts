@@ -32,8 +32,10 @@ export async function GET(
         });
 
         const balances: Record<string, number> = {};
+        const totalSpent: Record<string, number> = {};
         members.forEach((member) => {
             balances[member.userId] = 0;
+            totalSpent[member.userId] = 0;
         });
 
         for (const expense of expenses) {
@@ -42,11 +44,15 @@ export async function GET(
                     if (balances[split.userId] !== undefined) {
                         balances[split.userId] -= split.amount;
                     }
+                    if (totalSpent[split.userId] !== undefined) {
+                        totalSpent[split.userId] += split.amount;
+                    }
                 }
             } else {
                 const splitAmount = expense.amount / members.length;
                 for (const member of members) {
                     balances[member.userId] -= splitAmount;
+                    totalSpent[member.userId] += splitAmount;
                 }
             }
 
@@ -68,6 +74,7 @@ export async function GET(
             userId: member.userId,
             name: member.user.name,
             balance: Number(balances[member.userId].toFixed(2)),
+            totalSpent: Number(totalSpent[member.userId].toFixed(2)),
         }));
 
         const settlementPlan = calculateSettlements(balanceArray);
@@ -76,6 +83,7 @@ export async function GET(
             id: b.userId,
             name: b.name,
             balance: b.balance,
+            totalSpent: b.totalSpent
         }));
 
         const edges = settlementPlan.map((s) => ({
