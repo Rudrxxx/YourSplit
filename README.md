@@ -70,6 +70,56 @@ All financial data is stored in PostgreSQL using Prisma ORM.
 
 ---
 
+## 5. How to Setup Locally
+
+Follow these steps to run YourSplit on your local machine.
+
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or yarn
+- PostgreSQL (running locally or via a cloud provider like Supabase/Neon)
+
+### Installation Steps
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Rudrxxx/YourSplit.git
+   cd YourSplit
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables:**
+   Create a `.env` file in the root directory and add your PostgreSQL database connection string:
+   ```env
+   DATABASE_URL="postgresql://user:password@localhost:5432/yoursplit?schema=public"
+   ```
+
+4. **Initialize the database:**
+   Run Prisma migrations to set up the database schema:
+   ```bash
+   npx prisma migrate dev --name init
+   ```
+   *Note: If you are using a provider like Supabase that uses connection pooling, you may need a separate `DIRECT_URL` in your `.env`.*
+
+5. **Generate Prisma Client:**
+   ```bash
+   npx prisma generate
+   ```
+
+6. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+7. **Open the application:**
+   Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
 ## 5. Database Design
 
 ### ER Diagram
