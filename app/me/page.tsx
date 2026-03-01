@@ -89,7 +89,7 @@ export default function MePage() {
                     })
                 );
                 setBalancesData(results);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error("Failed to fetch some balances", err);
             } finally {
                 setCalculating(false);
@@ -139,7 +139,7 @@ export default function MePage() {
 
     if (loading) {
         return (
-            <main className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
+            <main className="min-h-screen bg-white text-slate-900 flex items-center justify-center">
                 <Spinner className="w-8 h-8 text-indigo-500" />
             </main>
         );
@@ -147,32 +147,32 @@ export default function MePage() {
 
     if (error) {
         return (
-            <main className="min-h-screen bg-gray-950 text-white p-10">
-                <p className="text-red-400">Failed to load system data: {error}</p>
+            <main className="min-h-screen bg-white text-slate-900 p-10">
+                <p className="text-red-500 font-bold">Failed to load system data: {error}</p>
             </main>
         );
     }
 
     return (
-        <main className="min-h-screen bg-gray-950 text-white px-6 py-10 relative">
+        <main className="min-h-screen bg-transparent text-slate-900 px-6 py-10 relative">
             <div className="max-w-3xl mx-auto space-y-10">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-gray-800">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200">
                     <div>
-                        <Link href="/dashboard" className="text-sm text-indigo-400 hover:text-indigo-300 font-medium tracking-wide flex items-center gap-1.5 mb-3 transition-colors">
+                        <Link href="/dashboard" className="text-sm text-indigo-600 hover:text-indigo-500 font-bold tracking-wide flex items-center gap-1.5 mb-3 transition-colors">
                             <span>←</span> Back to Dashboard
                         </Link>
-                        <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-1">Financial Overview</h1>
-                        <p className="text-gray-400 text-sm font-medium">Review your cross-group standing across the platform.</p>
+                        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 mb-1">Financial Overview</h1>
+                        <p className="text-slate-500 text-sm font-semibold">Review your cross-group standing across the platform.</p>
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <label className="text-sm font-medium text-gray-400 whitespace-nowrap">View as:</label>
+                        <label className="text-sm font-bold text-slate-500 whitespace-nowrap uppercase tracking-widest">View as:</label>
                         <select
                             value={selectedUserId}
                             onChange={(e) => setSelectedUserId(e.target.value)}
                             disabled={calculating}
-                            className="bg-gray-900 border border-gray-700 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 transition-colors"
+                            className="bg-white border border-slate-300 shadow-sm text-slate-900 font-semibold text-sm rounded-xl focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 transition-colors"
                         >
                             {users.map(u => (
                                 <option key={u.id} value={u.id}>{u.name}</option>
@@ -182,9 +182,9 @@ export default function MePage() {
                 </div>
 
                 {calculating && (
-                    <div className="flex flex-col items-center justify-center py-20 text-gray-500 space-y-4">
+                    <div className="flex flex-col items-center justify-center py-20 text-slate-500 space-y-4">
                         <Spinner className="w-8 h-8 text-indigo-500" />
-                        <p className="text-sm animate-pulse">Aggregating balances across {groups.length} groups...</p>
+                        <p className="text-sm font-bold animate-pulse">Aggregating balances across {groups.length} groups...</p>
                     </div>
                 )}
 
@@ -195,57 +195,57 @@ export default function MePage() {
                         {/* Top Level Metric Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Owe Metric */}
-                            <div className="bg-gradient-to-br from-gray-900/80 to-gray-900 border border-gray-800 rounded-2xl p-6 relative overflow-hidden group hover:border-red-900/50 hover:shadow-lg hover:shadow-red-500/5 transition-all duration-300">
+                            <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 relative overflow-hidden group hover:border-red-200 hover:shadow-md transition-all duration-300">
                                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500">
                                     <svg className="w-20 h-20 text-red-500 transform translate-x-4 -translate-y-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
                                     </svg>
                                 </div>
-                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
                                     <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                                     Total You Owe
                                 </p>
-                                <div className="flex items-baseline gap-2 text-white mt-1">
-                                    <span className="text-4xl font-bold tracking-tight tabular-nums">₹{financials.totalIOwe.toFixed(2)}</span>
+                                <div className="flex items-baseline gap-2 text-slate-900 mt-1">
+                                    <span className="text-4xl font-extrabold tracking-tight tabular-nums">₹{financials.totalIOwe.toFixed(2)}</span>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-4 leading-snug font-medium">
+                                <p className="text-xs text-slate-500 mt-4 leading-snug font-semibold">
                                     The sum of outstanding debts across all your active split groups.
                                 </p>
                             </div>
 
                             {/* Owed To Metric */}
-                            <div className="bg-gradient-to-br from-gray-900/80 to-gray-900 border border-gray-800 rounded-2xl p-6 relative overflow-hidden group hover:border-emerald-900/50 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300">
+                            <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 relative overflow-hidden group hover:border-emerald-200 hover:shadow-md transition-all duration-300">
                                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500">
                                     <svg className="w-20 h-20 text-emerald-500 transform translate-x-4 -translate-y-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                                     </svg>
                                 </div>
-                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                     Total Owed To You
                                 </p>
-                                <div className="flex items-baseline gap-2 text-white mt-1">
-                                    <span className="text-4xl font-bold tracking-tight tabular-nums">₹{financials.totalOwedToMe.toFixed(2)}</span>
+                                <div className="flex items-baseline gap-2 text-slate-900 mt-1">
+                                    <span className="text-4xl font-extrabold tracking-tight tabular-nums">₹{financials.totalOwedToMe.toFixed(2)}</span>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-4 leading-snug font-medium">
+                                <p className="text-xs text-slate-500 mt-4 leading-snug font-semibold">
                                     The sum of amounts that other group members currently owe you.
                                 </p>
                             </div>
                         </div>
 
                         {/* Net Position Banner */}
-                        <div className={`rounded-xl px-6 py-5 flex items-center justify-between border ${financials.netBalance > 0
-                            ? 'bg-emerald-950/20 border-emerald-900/50 text-emerald-400'
+                        <div className={`rounded-2xl px-6 py-5 flex items-center justify-between border shadow-sm ${financials.netBalance > 0
+                            ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
                             : financials.netBalance < 0
-                                ? 'bg-red-950/20 border-red-900/50 text-red-400'
-                                : 'bg-gray-800 border-gray-700 text-gray-400'
+                                ? 'bg-red-50 border-red-200 text-red-700'
+                                : 'bg-slate-50 border-slate-200 text-slate-600'
                             }`}>
                             <div>
-                                <h3 className="text-sm font-semibold uppercase tracking-wide">Net Position</h3>
-                                <p className="text-xs opacity-70 mt-0.5">Your overall standing when factoring all debts and credits seamlessly.</p>
+                                <h3 className="text-sm font-bold uppercase tracking-widest">Net Position</h3>
+                                <p className={`text-xs mt-1 font-semibold ${financials.netBalance > 0 ? "text-emerald-600" : financials.netBalance < 0 ? "text-red-600" : "text-slate-500"}`}>Your overall standing when factoring all debts and credits seamlessly.</p>
                             </div>
                             <div className="text-right">
-                                <span className="text-2xl font-bold tabular-nums">
+                                <span className={`text-3xl font-extrabold tabular-nums tracking-tight ${financials.netBalance > 0 ? "text-emerald-600" : financials.netBalance < 0 ? "text-red-600" : "text-slate-500"}`}>
                                     {financials.netBalance > 0 ? '+' : ''}₹{financials.netBalance.toFixed(2)}
                                 </span>
                             </div>
@@ -256,26 +256,26 @@ export default function MePage() {
 
                             {/* Creditor Section */}
                             <div className="space-y-4">
-                                <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                                <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
                                     <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                                     Groups where you are a creditor
                                 </h2>
 
                                 {financials.creditorGroups.length === 0 ? (
-                                    <div className="px-5 py-8 border border-dashed border-gray-800 rounded-xl bg-gray-900/30 text-center">
-                                        <p className="text-sm text-gray-500">You are not a creditor in any group.</p>
+                                    <div className="px-5 py-8 border border-dashed border-slate-200 rounded-2xl bg-slate-50 text-center shadow-sm">
+                                        <p className="text-sm font-semibold text-slate-500">You are not a creditor in any group.</p>
                                     </div>
                                 ) : (
                                     <ul className="space-y-3">
                                         {financials.creditorGroups.map((cg) => (
-                                            <li key={cg.group.id} className="group flex items-center justify-between bg-gray-900/60 border border-gray-800/80 hover:border-gray-700 hover:bg-gray-800/80 hover:-translate-y-0.5 shadow-sm hover:shadow-emerald-500/5 transition-all duration-300 rounded-xl px-5 py-4">
+                                            <li key={cg.group.id} className="group flex items-center justify-between bg-white border border-slate-200 hover:border-indigo-200 hover:bg-slate-50 hover:-translate-y-0.5 shadow-sm transition-all duration-300 rounded-xl px-5 py-4">
                                                 <div className="truncate pr-4">
-                                                    <Link href={`/dashboard/groups/${cg.group.id}`} className="font-semibold text-white group-hover:text-indigo-400 transition-colors truncate block text-base">
+                                                    <Link href={`/dashboard/groups/${cg.group.id}`} className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors truncate block text-base">
                                                         {cg.group.name}
                                                     </Link>
-                                                    <p className="text-[11px] font-bold tracking-wide text-gray-500 mt-1 uppercase">Gets back</p>
+                                                    <p className="text-[11px] font-bold tracking-widest text-slate-500 mt-1 uppercase">Gets back</p>
                                                 </div>
-                                                <span className="text-emerald-400 text-lg font-bold tabular-nums shrink-0">
+                                                <span className="text-emerald-600 text-lg font-bold tabular-nums shrink-0">
                                                     +₹{cg.balance.toFixed(2)}
                                                 </span>
                                             </li>
@@ -286,26 +286,26 @@ export default function MePage() {
 
                             {/* Debtor Section */}
                             <div className="space-y-4">
-                                <h2 className="text-base font-semibold text-white flex items-center gap-2">
+                                <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
                                     <span className="w-2 h-2 rounded-full bg-red-500"></span>
                                     Groups where you are a debtor
                                 </h2>
 
                                 {financials.debtorGroups.length === 0 ? (
-                                    <div className="px-5 py-8 border border-dashed border-gray-800 rounded-xl bg-gray-900/30 text-center">
-                                        <p className="text-sm text-gray-500">You do not owe anything in any group.</p>
+                                    <div className="px-5 py-8 border border-dashed border-slate-200 rounded-2xl bg-slate-50 text-center shadow-sm">
+                                        <p className="text-sm font-semibold text-slate-500">You do not owe anything in any group.</p>
                                     </div>
                                 ) : (
                                     <ul className="space-y-3">
                                         {financials.debtorGroups.map((dg) => (
-                                            <li key={dg.group.id} className="group flex items-center justify-between bg-gray-900/60 border border-gray-800/80 hover:border-gray-700 hover:bg-gray-800/80 hover:-translate-y-0.5 shadow-sm hover:shadow-red-500/5 transition-all duration-300 rounded-xl px-5 py-4">
+                                            <li key={dg.group.id} className="group flex items-center justify-between bg-white border border-slate-200 hover:border-indigo-200 hover:bg-slate-50 hover:-translate-y-0.5 shadow-sm transition-all duration-300 rounded-xl px-5 py-4">
                                                 <div className="truncate pr-4">
-                                                    <Link href={`/dashboard/groups/${dg.group.id}`} className="font-semibold text-white group-hover:text-indigo-400 transition-colors truncate block text-base">
+                                                    <Link href={`/dashboard/groups/${dg.group.id}`} className="font-bold text-slate-900 group-hover:text-indigo-600 transition-colors truncate block text-base">
                                                         {dg.group.name}
                                                     </Link>
-                                                    <p className="text-[11px] font-bold tracking-wide text-gray-500 mt-1 uppercase">Owes</p>
+                                                    <p className="text-[11px] font-bold tracking-widest text-slate-500 mt-1 uppercase">Owes</p>
                                                 </div>
-                                                <span className="text-red-400 text-lg font-bold tabular-nums shrink-0">
+                                                <span className="text-red-600 text-lg font-bold tabular-nums shrink-0">
                                                     -₹{Math.abs(dg.balance).toFixed(2)}
                                                 </span>
                                             </li>

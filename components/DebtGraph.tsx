@@ -7,12 +7,12 @@ import dynamic from "next/dynamic";
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
     ssr: false,
     loading: () => (
-        <div className="h-[400px] w-full rounded-2xl border border-gray-800 bg-[#0a0a0e] flex flex-col items-center justify-center gap-4 shadow-inner">
+        <div className="h-[400px] w-full rounded-2xl border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-4 shadow-sm">
             <div className="relative">
-                <div className="h-12 w-12 rounded-full border-2 border-gray-800"></div>
+                <div className="h-12 w-12 rounded-full border-2 border-slate-200"></div>
                 <div className="absolute inset-0 h-12 w-12 rounded-full border-t-2 border-indigo-500 animate-spin"></div>
             </div>
-            <p className="text-xs font-medium text-gray-500 tracking-widest uppercase">Initializing Graph Engine</p>
+            <p className="text-xs font-bold text-slate-500 tracking-widest uppercase">Initializing Graph Engine</p>
         </div>
     )
 });
@@ -107,9 +107,9 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
     // Stable node color callback — prevents new function allocation on every render
     const getNodeColor = useCallback((node: Record<string, unknown>) => {
         const balance = node.balance as number;
-        if (balance > 0) return "#34d399"; // emerald-400 for positive
-        if (balance < 0) return "#f87171"; // red-400 for negative
-        return "#9ca3af"; // gray-400 for neutral
+        if (balance > 0) return "#059669"; // emerald-600 for positive
+        if (balance < 0) return "#dc2626"; // red-600 for negative
+        return "#64748b"; // slate-500 for neutral
     }, []);
 
     // Memoize the active graph object — only recomputes when data or mode changes
@@ -120,7 +120,7 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
 
     // Stable link props — prevents ForceGraph2D re-mounting on every render
     const getLinkColor = useCallback((link: Record<string, unknown>) =>
-        link.type === viewMode ? "rgba(75, 85, 99, 0.4)" : "rgba(0,0,0,0)"
+        link.type === viewMode ? "rgba(148, 163, 184, 0.6)" : "rgba(0,0,0,0)"
         , [viewMode]);
 
     const getLinkWidth = useCallback((link: Record<string, unknown>) =>
@@ -133,13 +133,13 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
 
     if (loading) {
         return (
-            <div className="rounded-2xl border border-gray-800 bg-[#0a0a0e] shadow-inner overflow-hidden">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 shadow-sm overflow-hidden">
                 <div className="h-[400px] flex flex-col items-center justify-center gap-4">
                     <div className="relative">
-                        <div className="h-12 w-12 rounded-full border-2 border-gray-800"></div>
+                        <div className="h-12 w-12 rounded-full border-2 border-slate-200"></div>
                         <div className="absolute inset-0 h-12 w-12 rounded-full border-t-2 border-indigo-500 animate-spin"></div>
                     </div>
-                    <p className="text-xs font-medium text-gray-500 tracking-widest uppercase">Loading Debt Graph</p>
+                    <p className="text-xs font-bold text-slate-500 tracking-widest uppercase">Loading Debt Graph</p>
                 </div>
             </div>
         );
@@ -147,7 +147,7 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
 
     if (!graphData || graphData.nodes.length === 0) {
         return (
-            <div className="h-[400px] w-full rounded-2xl border border-gray-800 bg-gray-900/40 flex flex-col items-center justify-center shadow-inner text-gray-500 text-sm">
+            <div className="h-[400px] w-full rounded-2xl border border-slate-200 bg-slate-50 flex flex-col items-center justify-center shadow-sm text-slate-500 text-sm font-semibold">
                 <span className="text-3xl mb-3">🕸️</span>
                 Not enough activity to visualize.
             </div>
@@ -157,17 +157,17 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-end">
-                <div className="flex items-center gap-1 bg-gray-900/60 p-1 rounded-lg border border-gray-800/80">
+                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
                     <button
                         onClick={() => setViewMode("raw")}
-                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${viewMode === "raw" ? "bg-gray-800 text-white shadow-sm ring-1 ring-gray-700/50" : "text-gray-500 hover:text-gray-300"}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all duration-200 ${viewMode === "raw" ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200" : "text-slate-500 hover:text-slate-700"}`}
                         title="Show all individual transaction routes"
                     >
                         Raw View
                     </button>
                     <button
                         onClick={() => setViewMode("optimized")}
-                        className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${viewMode === "optimized" ? "bg-indigo-900/60 text-indigo-100 shadow-sm ring-1 ring-indigo-700/50" : "text-gray-500 hover:text-indigo-300"}`}
+                        className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all duration-200 ${viewMode === "optimized" ? "bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-200" : "text-slate-500 hover:text-indigo-600"}`}
                         title="Show minimum settlement transactions"
                     >
                         Optimized View
@@ -175,7 +175,7 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
                 </div>
             </div>
 
-            <div ref={containerRef} className="h-[400px] w-full rounded-2xl border border-gray-800 bg-[#0a0a0e] overflow-hidden relative shadow-inner">
+            <div ref={containerRef} className="h-[400px] w-full rounded-2xl border border-slate-200 bg-white overflow-hidden relative shadow-sm bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]">
                 <ForceGraph2D
                     width={dimensions.width}
                     height={dimensions.height}
@@ -183,20 +183,20 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
                     nodeLabel={(node: Record<string, unknown>) => {
                         const balance = node.balance as number;
                         const spent = node.totalSpent as number;
-                        const statusClass = balance > 0 ? "text-emerald-400" : balance < 0 ? "text-red-400" : "text-gray-400";
+                        const statusClass = balance > 0 ? "text-emerald-600" : balance < 0 ? "text-red-600" : "text-slate-500";
                         const statusText = balance > 0 ? "Gets back" : balance < 0 ? "Owes" : "Settled up";
                         const formattedBalance = balance === 0 ? "" : `₹${Math.abs(balance).toFixed(2)}`;
 
                         return `
-                        <div class="bg-gray-900 border border-gray-800 rounded-lg p-3 shadow-xl backdrop-blur-sm shadow-black/50 text-xs min-w-[140px]">
-                            <p class="font-bold text-white text-base mb-1.5">${node.name as string}</p>
+                        <div class="bg-white border border-slate-200 rounded-lg p-3 shadow-xl backdrop-blur-sm shadow-slate-200/50 text-xs min-w-[140px]">
+                            <p class="font-extrabold text-slate-900 text-base mb-1.5">${node.name as string}</p>
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-gray-500 font-medium">Spent</span>
-                                <span class="font-semibold text-gray-200">₹${spent.toFixed(2)}</span>
+                                <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px]">Spent</span>
+                                <span class="font-bold text-slate-700">₹${spent.toFixed(2)}</span>
                             </div>
-                            <div class="flex items-center justify-between pt-1 border-t border-gray-800/80">
-                                <span class="text-gray-500 font-medium">${statusText}</span>
-                                <span class="font-bold ${statusClass}">${balance > 0 ? '+' : balance < 0 ? '-' : ''}${formattedBalance}</span>
+                            <div class="flex items-center justify-between pt-1 border-t border-slate-100">
+                                <span class="text-slate-500 font-bold uppercase tracking-widest text-[10px]">${statusText}</span>
+                                <span class="font-extrabold ${statusClass}">${balance > 0 ? '+' : balance < 0 ? '-' : ''}${formattedBalance}</span>
                             </div>
                         </div>
                     `;
@@ -248,7 +248,7 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
                         const textWidth = ctx.measureText(label).width;
                         const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.4);
 
-                        ctx.fillStyle = "rgba(10, 10, 14, 0.9)";
+                        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
                         ctx.fillRect(
                             -bckgDimensions[0] / 2,
                             -bckgDimensions[1] / 2 - 2,
@@ -256,7 +256,7 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
                             bckgDimensions[1]
                         );
 
-                        ctx.fillStyle = "rgba(156, 163, 175, 1)";
+                        ctx.fillStyle = "rgba(100, 116, 139, 1)";
                         ctx.fillText(label, 0, -2);
                         ctx.restore();
                     }}
@@ -264,28 +264,28 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
             </div>
 
             {graphData && (
-                <div className="mt-4 p-5 rounded-2xl border border-gray-800 bg-gray-900/40 shadow-inner">
+                <div className="mt-4 p-5 rounded-2xl border border-slate-200 bg-white shadow-sm">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 mb-4">
                         <div className="flex flex-col">
-                            <span className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-1">Raw Transactions</span>
-                            <span className="text-2xl font-bold text-white tabular-nums">{graphData.rawLinks.length}</span>
+                            <span className="text-slate-500 font-bold text-xs uppercase tracking-wider mb-1">Raw Transactions</span>
+                            <span className="text-2xl font-extrabold text-slate-900 tabular-nums">{graphData.rawLinks.length}</span>
                         </div>
-                        <div className="hidden sm:block w-px h-10 bg-gray-800"></div>
+                        <div className="hidden sm:block w-px h-10 bg-slate-200"></div>
                         <div className="flex flex-col">
-                            <span className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-1">Optimized Transactions</span>
-                            <span className="text-2xl font-bold text-emerald-400 tabular-nums">{graphData.optimizedLinks.length}</span>
+                            <span className="text-slate-500 font-bold text-xs uppercase tracking-wider mb-1">Optimized Transactions</span>
+                            <span className="text-2xl font-extrabold text-emerald-600 tabular-nums">{graphData.optimizedLinks.length}</span>
                         </div>
-                        <div className="hidden sm:block w-px h-10 bg-gray-800"></div>
+                        <div className="hidden sm:block w-px h-10 bg-slate-200"></div>
                         <div className="flex flex-col">
-                            <span className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-1">Reduction</span>
-                            <span className="text-2xl font-bold text-indigo-400 tabular-nums">
+                            <span className="text-slate-500 font-bold text-xs uppercase tracking-wider mb-1">Reduction</span>
+                            <span className="text-2xl font-extrabold text-indigo-600 tabular-nums">
                                 {graphData.rawLinks.length > 0
                                     ? Math.round(((graphData.rawLinks.length - graphData.optimizedLinks.length) / graphData.rawLinks.length) * 100)
                                     : 0}%
                             </span>
                         </div>
                     </div>
-                    <p className="text-gray-400 text-sm leading-relaxed border-t border-gray-800/80 pt-4">
+                    <p className="text-slate-500 text-sm font-semibold leading-relaxed border-t border-slate-100 pt-4">
                         The optimization algorithm matches largest creditors with largest debtors to minimize transaction count.
                     </p>
                 </div>

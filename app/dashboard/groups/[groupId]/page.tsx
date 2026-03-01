@@ -329,7 +329,7 @@ export default function GroupBalancesPage({
     };
 
     const balanceColor = (b: number) =>
-        b > 0 ? "text-emerald-400" : b < 0 ? "text-red-400" : "text-gray-500";
+        b > 0 ? "text-emerald-600" : b < 0 ? "text-red-600" : "text-slate-500";
     const balanceLabel = (b: number) =>
         b > 0
             ? `gets back ₹${b.toFixed(2)}`
@@ -342,307 +342,320 @@ export default function GroupBalancesPage({
             {/* Toast */}
             {toast && <Toast message={toast} onDone={() => setToast(null)} />}
 
-            <main className="min-h-screen bg-gray-950 text-white px-6 py-10">
-                <div className="max-w-2xl mx-auto">
-                    <Link
-                        href="/dashboard"
-                        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-300 transition-colors mb-8"
-                    >
-                        ← Back to groups
-                    </Link>
+            <div className="max-w-2xl mx-auto py-10 px-6 min-h-[calc(100vh-8rem)] bg-transparent text-slate-900 w-full">
+                <Link
+                    href="/dashboard"
+                    className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-indigo-600 font-semibold transition-colors mb-8"
+                >
+                    ← Back to groups
+                </Link>
 
-                    {/* Initial loading skeleton */}
-                    {loading && (
-                        <div className="space-y-4">
-                            <div className="h-8 w-48 rounded-lg bg-gray-800 animate-pulse" />
-                            <div className="h-28 rounded-xl bg-gray-800 animate-pulse" />
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className="h-16 rounded-xl bg-gray-800 animate-pulse" />
-                            ))}
+                {/* Initial loading skeleton */}
+                {loading && (
+                    <div className="space-y-4">
+                        <div className="h-8 w-48 rounded-lg bg-slate-200 animate-pulse" />
+                        <div className="h-28 rounded-xl bg-slate-200 animate-pulse" />
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className="h-16 rounded-xl bg-slate-200 animate-pulse" />
+                        ))}
+                    </div>
+                )}
+
+                {/* Error */}
+                {!loading && error && (
+                    <div className="rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-red-600 shadow-sm text-sm font-semibold">
+                        Failed to load group: {error}
+                    </div>
+                )}
+
+                {/* Content — shown immediately, dims while refreshing */}
+                {!loading && !error && balanceData && settlementData && (
+                    <div className={`transition-opacity duration-200 ${refreshing ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
+                        {/* Header */}
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-10">
+                            <div>
+                                <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-3">
+                                    <span className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100 shadow-sm">
+                                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                        </svg>
+                                    </span>
+                                    Group Balances
+                                </h1>
+                                <p className="text-xs text-slate-500 mt-2 font-mono bg-slate-100 px-2.5 py-1 rounded inline-block border border-slate-200 uppercase tracking-widest font-semibold">
+                                    ID: {balanceData.groupId}
+                                </p>
+                            </div>
+                            <div className="flex flex-wrap items-center justify-end gap-2">
+                                <a
+                                    href={`/api/groups/${groupId}/export`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 py-2 px-4 shadow-sm text-sm font-bold text-slate-700 transition-colors"
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                    Export
+                                </a>
+                                <button
+                                    onClick={openMemberModal}
+                                    disabled={refreshing}
+                                    className="rounded-lg border border-slate-200 bg-white hover:bg-slate-50 py-2 px-4 shadow-sm text-sm font-bold text-slate-700 transition-colors disabled:opacity-50"
+                                >
+                                    + Add Member
+                                </button>
+                                <button
+                                    onClick={openSettlementModal}
+                                    disabled={refreshing}
+                                    className="rounded-lg border border-slate-200 bg-white hover:bg-slate-50 py-2 px-4 shadow-sm text-sm font-bold text-slate-700 transition-colors disabled:opacity-50"
+                                >
+                                    Record Payment
+                                </button>
+                                <button
+                                    onClick={openModal}
+                                    disabled={refreshing}
+                                    className="flex items-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 shadow-sm hover:shadow-md disabled:opacity-50 transition-colors px-4 py-2 text-sm font-bold text-white"
+                                >
+                                    {refreshing ? <Spinner className="w-4 h-4" /> : null}
+                                    + Add Expense
+                                </button>
+                            </div>
                         </div>
-                    )}
 
-                    {/* Error */}
-                    {!loading && error && (
-                        <div className="rounded-xl border border-red-800 bg-red-950/40 px-5 py-4 text-red-300 text-sm">
-                            Failed to load group: {error}
+                        {/* Summary */}
+                        <div className="rounded-2xl border border-slate-200 bg-white px-8 py-8 mb-8 grid grid-cols-2 gap-6 shadow-sm shadow-slate-200 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full blur-3xl pointer-events-none"></div>
+
+                            <div className="relative z-10">
+                                <p className="text-xs text-indigo-600 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Total Expenses
+                                </p>
+                                <p className="text-4xl font-extrabold tracking-tight text-slate-900 drop-shadow-sm">₹{Number(balanceData.totalExpenses).toFixed(2)}</p>
+                            </div>
+                            <div className="border-l border-slate-100 pl-8 relative z-10">
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    Per Person
+                                </p>
+                                <p className="text-4xl font-extrabold tracking-tight text-slate-700 drop-shadow-sm">₹{Number(balanceData.perPersonShare).toFixed(2)}</p>
+                            </div>
                         </div>
-                    )}
 
-                    {/* Content — shown immediately, dims while refreshing */}
-                    {!loading && !error && balanceData && settlementData && (
-                        <div className={`transition-opacity duration-200 ${refreshing ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
-                            {/* Header */}
-                            <div className="flex items-start justify-between mb-8">
-                                <div>
-                                    <h1 className="text-2xl font-bold tracking-tight">Group Balances</h1>
-                                    <p className="text-xs text-gray-600 mt-1 font-mono">{balanceData.groupId}</p>
-                                </div>
-                                <div className="flex flex-wrap items-center justify-end gap-2">
-                                    <a
-                                        href={`/api/groups/${groupId}/export`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-900 hover:bg-gray-800 py-2 px-4 text-sm font-medium text-gray-300 transition-colors"
-                                    >
-                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                        </svg>
-                                        Export
-                                    </a>
-                                    <button
-                                        onClick={openMemberModal}
-                                        disabled={refreshing}
-                                        className="rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 py-2 px-4 text-sm font-medium text-white transition-colors disabled:opacity-50"
-                                    >
-                                        + Add Member
-                                    </button>
-                                    <button
-                                        onClick={openSettlementModal}
-                                        disabled={refreshing}
-                                        className="rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 py-2 px-4 text-sm font-medium text-white transition-colors disabled:opacity-50"
-                                    >
-                                        Record Payment
-                                    </button>
-                                    <button
-                                        onClick={openModal}
-                                        disabled={refreshing}
-                                        className="flex items-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 disabled:opacity-50 transition-colors px-4 py-2 text-sm font-medium text-white"
-                                    >
-                                        {refreshing ? <Spinner className="w-4 h-4" /> : null}
-                                        + Add Expense
-                                    </button>
-                                </div>
+                        {/* Insights strip */}
+                        <div className="rounded-xl border border-slate-200 bg-slate-50 px-6 py-5 mb-10 grid grid-cols-3 divide-x divide-slate-200 shadow-sm">
+                            <div className="pr-5 group cursor-pointer" onClick={openMemberModal}>
+                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1 shadow-sm group-hover:text-indigo-600 transition-colors">Members</p>
+                                <p className="text-2xl font-bold text-slate-700 group-hover:text-slate-900 transition-colors">{balanceData.balances.length}</p>
                             </div>
-
-                            {/* Summary */}
-                            <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-gray-900 via-gray-900 to-indigo-950/20 px-6 py-6 mb-8 grid grid-cols-2 gap-6 shadow-xl shadow-black/20">
-                                <div>
-                                    <p className="text-xs text-indigo-400 font-semibold uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        Total Expenses
-                                    </p>
-                                    <p className="text-3xl font-bold tracking-tight text-white">₹{Number(balanceData.totalExpenses).toFixed(2)}</p>
-                                </div>
-                                <div className="border-l border-gray-800/60 pl-6">
-                                    <p className="text-xs text-gray-400 font-semibold uppercase tracking-widest mb-1.5 flex items-center gap-2">
-                                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                        </svg>
-                                        Per Person
-                                    </p>
-                                    <p className="text-3xl font-bold tracking-tight text-gray-100">₹{Number(balanceData.perPersonShare).toFixed(2)}</p>
-                                </div>
+                            <div className="px-5 group cursor-pointer" onClick={() => document.getElementById('expense-history')?.scrollIntoView({ behavior: 'smooth' })}>
+                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1 shadow-sm group-hover:text-indigo-600 transition-colors">Expenses</p>
+                                <p className="text-2xl font-bold text-slate-700 group-hover:text-slate-900 transition-colors">{expenses.length}</p>
                             </div>
-
-                            {/* Insights strip */}
-                            <div className="rounded-xl border border-gray-800/60 bg-gray-900/40 backdrop-blur-sm px-6 py-4 mb-8 grid grid-cols-3 divide-x divide-gray-800/60 shadow-inner">
-                                <div className="pr-5 group cursor-pointer" onClick={openMemberModal}>
-                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1 group-hover:text-indigo-400 transition-colors">Members</p>
-                                    <p className="text-xl font-semibold text-gray-200 group-hover:text-white transition-colors">{balanceData.balances.length}</p>
-                                </div>
-                                <div className="px-5 group cursor-pointer" onClick={() => document.getElementById('expense-history')?.scrollIntoView({ behavior: 'smooth' })}>
-                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1 group-hover:text-indigo-400 transition-colors">Expenses</p>
-                                    <p className="text-xl font-semibold text-gray-200 group-hover:text-white transition-colors">{expenses.length}</p>
-                                </div>
-                                <div className="pl-5">
-                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Last Expense</p>
-                                    <p className="text-lg font-medium text-gray-300">
-                                        {expenses.length > 0
-                                            ? new Date(expenses[0].createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })
-                                            : "—"}
-                                    </p>
-                                </div>
+                            <div className="pl-5">
+                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1 shadow-sm">Last Expense</p>
+                                <p className="text-xl font-bold text-slate-600">
+                                    {expenses.length > 0
+                                        ? new Date(expenses[0].createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })
+                                        : "—"}
+                                </p>
                             </div>
+                        </div>
 
-                            {/* No expenses empty state OR member/settlement sections */}
-                            {balanceData.totalExpenses === 0 ? (
-                                <div className="rounded-2xl border border-dashed border-gray-700 bg-gray-900/50 px-8 py-16 text-center shadow-sm">
-                                    <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-gray-700 bg-gray-800 text-3xl shadow-lg shadow-black/20">
-                                        💸
-                                    </div>
-                                    <h2 className="text-lg font-semibold text-white mb-2">No expenses yet</h2>
-                                    <p className="text-sm text-gray-500 max-w-sm mx-auto leading-relaxed">
-                                        Add the first expense to start tracking who owes what across the group.
-                                    </p>
-                                    <button
-                                        onClick={openModal}
-                                        className="mt-6 rounded-lg bg-indigo-600 hover:bg-indigo-500 hover:-translate-y-0.5 shadow-lg shadow-indigo-500/20 transition-all duration-300 px-5 py-2.5 text-sm font-medium text-white"
-                                    >
-                                        + Add First Expense
-                                    </button>
+                        {/* No expenses empty state OR member/settlement sections */}
+                        {balanceData.totalExpenses === 0 ? (
+                            <div className="rounded-3xl border border-indigo-100 bg-white px-8 py-20 text-center shadow-md shadow-indigo-500/5 relative overflow-hidden mt-8">
+                                <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-indigo-500/10 to-transparent"></div>
+                                <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl border border-indigo-100 bg-indigo-50 shadow-sm">
+                                    <span className="text-4xl">💸</span>
                                 </div>
-                            ) : (
-                                <>
-                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Contributor Analytics</p>
-                                    <div className="rounded-xl border border-gray-800 bg-gray-900 overflow-hidden mb-8">
-                                        {analytics.topContributor && (
-                                            <div className="bg-indigo-900/40 border-b border-indigo-500/30 px-5 py-4 flex items-center justify-between">
-                                                <div>
-                                                    <p className="text-xs text-indigo-400 font-medium uppercase tracking-wider mb-0.5">Top Contributor 👑</p>
-                                                    <p className="text-white font-semibold text-lg">{analytics.topContributor.name}</p>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="text-xs text-indigo-300/80 mb-0.5">Total Spent</p>
-                                                    <p className="text-indigo-400 font-bold text-xl">₹{Number(analytics.topContributor.amount).toFixed(2)}</p>
-                                                </div>
+                                <h2 className="text-2xl font-bold text-slate-900 mb-3 tracking-tight">No expenses yet</h2>
+                                <p className="text-base text-slate-500 max-w-sm mx-auto leading-relaxed mb-8 font-medium">
+                                    Add the first expense to start tracking who owes what across the group effortlessly.
+                                </p>
+                                <button
+                                    onClick={openModal}
+                                    className="rounded-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 shadow-sm hover:shadow-md transition-all duration-300 px-8 py-3.5 text-base font-bold text-white flex items-center gap-2 mx-auto"
+                                >
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Add First Expense
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">Contributor Analytics</p>
+                                <div className="rounded-xl border border-slate-200 bg-white overflow-hidden mb-8 shadow-sm">
+                                    {analytics.topContributor && (
+                                        <div className="bg-indigo-50 border-b border-indigo-100 px-5 py-4 flex items-center justify-between">
+                                            <div>
+                                                <p className="text-xs text-indigo-500 font-bold uppercase tracking-wider mb-0.5">Top Contributor 👑</p>
+                                                <p className="text-slate-900 font-bold text-lg">{analytics.topContributor.name}</p>
                                             </div>
-                                        )}
-                                        <ul className="divide-y divide-gray-800">
-                                            {analytics.leaderboard.map((user, idx) => (
-                                                <li key={idx} className="flex items-center justify-between px-5 py-3 bg-gray-900/80">
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="text-sm text-gray-500 font-medium w-4">{idx + 1}.</span>
-                                                        <span className="text-gray-200">{user.name}</span>
-                                                    </div>
-                                                    <span className="text-white font-medium">₹{Number(user.amount).toFixed(2)}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-
-                                    <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Members</p>
-                                    <ul className="space-y-3 mb-8">
-                                        {balanceData.balances.map((member) => (
-                                            <li
-                                                key={member.userId}
-                                                className="flex items-center justify-between rounded-xl border border-gray-800/80 bg-gray-900/60 px-5 py-4 hover:bg-gray-800/80 hover:border-gray-700 hover:-translate-y-0.5 transition-all duration-300"
-                                            >
-                                                <div>
-                                                    <p className="font-semibold text-white text-base">{member.name}</p>
-                                                    <p className={`text-sm mt-0.5 font-medium ${balanceColor(member.balance)}`}>
-                                                        {balanceLabel(member.balance)}
-                                                    </p>
+                                            <div className="text-right">
+                                                <p className="text-xs font-semibold text-indigo-400 mb-0.5">Total Spent</p>
+                                                <p className="text-indigo-600 font-extrabold text-xl">₹{Number(analytics.topContributor.amount).toFixed(2)}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <ul className="divide-y divide-slate-100">
+                                        {analytics.leaderboard.map((user, idx) => (
+                                            <li key={idx} className="flex items-center justify-between px-5 py-3 bg-white hover:bg-slate-50 transition-colors">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-sm text-slate-400 font-bold w-4">{idx + 1}.</span>
+                                                    <span className="text-slate-700 font-semibold">{user.name}</span>
                                                 </div>
-                                                <span className={`text-lg font-bold tabular-nums tracking-tight ${balanceColor(member.balance)}`}>
-                                                    {Number(member.balance) > 0 ? "+" : ""}₹{Number(member.balance).toFixed(2)}
-                                                </span>
+                                                <span className="text-slate-900 font-bold">₹{Number(user.amount).toFixed(2)}</span>
                                             </li>
                                         ))}
                                     </ul>
+                                </div>
 
-                                    <div className="flex items-center justify-between mb-4">
-                                        <p className="text-xs text-gray-500 uppercase tracking-widest">Settlement Plan</p>
-                                        <div className="flex items-center gap-1 bg-gray-900/60 p-1 rounded-lg border border-gray-800/80">
-                                            <button
-                                                onClick={() => setViewMode("list")}
-                                                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${viewMode === "list" ? "bg-gray-800 text-white shadow-sm ring-1 ring-gray-700/50" : "text-gray-500 hover:text-gray-300"}`}
-                                            >
-                                                List View
-                                            </button>
-                                            <button
-                                                onClick={() => setViewMode("graph")}
-                                                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${viewMode === "graph" ? "bg-indigo-900/60 text-indigo-100 shadow-sm ring-1 ring-indigo-700/50" : "text-gray-500 hover:text-indigo-300"}`}
-                                            >
-                                                Graph View
-                                            </button>
-                                        </div>
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">Members</p>
+                                <ul className="space-y-3 mb-8">
+                                    {balanceData.balances.map((member) => (
+                                        <li
+                                            key={member.userId}
+                                            className="flex items-center justify-between rounded-xl border border-slate-200 bg-white shadow-sm px-5 py-4 hover:bg-slate-50 hover:border-indigo-200 hover:-translate-y-0.5 transition-all duration-300"
+                                        >
+                                            <div>
+                                                <p className="font-bold text-slate-900 text-base">{member.name}</p>
+                                                <p className={`text-sm mt-0.5 font-semibold ${balanceColor(member.balance)}`}>
+                                                    {balanceLabel(member.balance)}
+                                                </p>
+                                            </div>
+                                            <span className={`text-lg font-bold tabular-nums tracking-tight ${balanceColor(member.balance)}`}>
+                                                {Number(member.balance) > 0 ? "+" : ""}₹{Number(member.balance).toFixed(2)}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                <div className="flex items-center justify-between mb-4">
+                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Settlement Plan</p>
+                                    <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                                        <button
+                                            onClick={() => setViewMode("list")}
+                                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all duration-200 ${viewMode === "list" ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200" : "text-slate-500 hover:text-slate-700"}`}
+                                        >
+                                            List View
+                                        </button>
+                                        <button
+                                            onClick={() => setViewMode("graph")}
+                                            className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all duration-200 ${viewMode === "graph" ? "bg-indigo-50 text-indigo-700 shadow-sm ring-1 ring-indigo-200" : "text-slate-500 hover:text-indigo-600"}`}
+                                        >
+                                            Graph View
+                                        </button>
                                     </div>
-                                    {viewMode === "graph" ? (
-                                        <div className="mt-2 animate-in fade-in zoom-in-95 duration-300">
-                                            <DebtGraph groupId={groupId as string} />
-                                        </div>
-                                    ) : settlementData.settlements.length === 0 ? (
-                                        <div className="mt-2 rounded-xl border border-gray-800/60 bg-emerald-950/10 px-5 py-6 text-center text-emerald-500/80 text-sm font-medium animate-in fade-in zoom-in-95 duration-300">
-                                            ✓ All settled up securely
-                                        </div>
-                                    ) : (
-                                        <ul className="space-y-3 mt-2 animate-in fade-in zoom-in-95 duration-300">
-                                            {settlementData.settlements.map((s, i) => (
-                                                <li
-                                                    key={i}
-                                                    className="flex items-center justify-between rounded-xl border border-indigo-900/30 bg-indigo-950/10 px-5 py-4 shadow-sm hover:border-indigo-800/50 transition-colors"
-                                                >
-                                                    <div className="flex items-center gap-3 text-sm">
-                                                        <span className="font-semibold text-red-400">{s.from}</span>
-                                                        <span className="text-gray-600 font-bold">→</span>
-                                                        <span className="font-semibold text-emerald-400">{s.to}</span>
-                                                    </div>
-                                                    <span className="text-white font-bold tracking-tight tabular-nums">
-                                                        ₹{Number(s.amount).toFixed(2)}
-                                                    </span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </>
-                            )}
-
-                            {/* Expense History */}
-                            <div id="expense-history" className="pt-8">
-                                <p className="text-xs text-gray-500 uppercase tracking-widest mb-3">Expense History</p>
-                                {expenses.length === 0 ? (
-                                    <div className="rounded-xl border border-gray-800/60 bg-gray-900/40 px-5 py-6 text-center text-gray-500 text-sm">
-                                        No expenses recorded yet.
+                                </div>
+                                {viewMode === "graph" ? (
+                                    <div className="mt-2 animate-in fade-in zoom-in-95 duration-300">
+                                        <DebtGraph groupId={groupId as string} />
+                                    </div>
+                                ) : settlementData.settlements.length === 0 ? (
+                                    <div className="mt-2 rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-6 text-center text-emerald-600 shadow-sm text-sm font-bold animate-in fade-in zoom-in-95 duration-300">
+                                        ✓ All settled up securely
                                     </div>
                                 ) : (
-                                    <ul className="space-y-3">
-                                        {expenses.map((exp) => (
+                                    <ul className="space-y-3 mt-2 animate-in fade-in zoom-in-95 duration-300">
+                                        {settlementData.settlements.map((s, i) => (
                                             <li
-                                                key={exp.id}
-                                                className="flex items-center justify-between rounded-xl border border-gray-800/60 bg-gray-900/60 px-5 py-4 hover:border-gray-700 hover:bg-gray-800/80 transition-colors"
+                                                key={i}
+                                                className="flex items-center justify-between rounded-xl border border-indigo-100 bg-white px-5 py-4 shadow-sm hover:border-indigo-200 transition-colors"
                                             >
-                                                <div className="min-w-0">
-                                                    <p className="font-semibold text-white truncate text-base">{exp.description}</p>
-                                                    <p className="text-xs text-gray-500 mt-1 font-medium tracking-wide">
-                                                        PAID BY <span className="text-gray-300 font-semibold">{exp.paidBy.name.toUpperCase()}</span>
-                                                        {" · "}
-                                                        {new Date(exp.createdAt).toLocaleDateString("en-IN", {
-                                                            day: "2-digit", month: "short", year: "numeric",
-                                                        }).toUpperCase()}
-                                                    </p>
+                                                <div className="flex items-center gap-3 text-sm">
+                                                    <span className="font-bold text-red-600">{s.from}</span>
+                                                    <span className="text-slate-400 font-bold hidden sm:inline">→</span>
+                                                    <span className="font-bold text-emerald-600">{s.to}</span>
                                                 </div>
-                                                <span className="ml-4 text-white font-bold tracking-tight text-lg tabular-nums shrink-0">
-                                                    ₹{Number(exp.amount).toFixed(2)}
+                                                <span className="text-slate-900 font-bold tracking-tight tabular-nums">
+                                                    ₹{Number(s.amount).toFixed(2)}
                                                 </span>
                                             </li>
                                         ))}
                                     </ul>
                                 )}
-                            </div>
+                            </>
+                        )}
 
-                            {/* Activity Timeline */}
-                            <div className="pt-10">
-                                <p className="text-xs text-gray-500 uppercase tracking-widest mb-4">Activity Timeline</p>
-                                {activities.length === 0 ? (
-                                    <div className="rounded-xl border border-gray-800/60 bg-gray-900/40 px-5 py-6 text-center text-gray-500 text-sm">
-                                        No activity yet.
-                                    </div>
-                                ) : (
-                                    <div className="relative border-l border-gray-800 ml-3 space-y-6 pb-4">
-                                        {activities.map((act) => (
-                                            <div key={act.id} className="relative pl-6 group">
-                                                <span className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-indigo-500 ring-4 ring-gray-950 group-hover:bg-indigo-400 group-hover:ring-gray-900 transition-colors shadow-sm"></span>
-                                                <p className="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">{act.message}</p>
-                                                <p className="text-[11px] font-medium tracking-wide text-gray-500 mt-1">
-                                                    {new Date(act.createdAt).toLocaleString("en-IN", {
-                                                        day: "numeric", month: "short", hour: "numeric", minute: "2-digit"
+                        {/* Expense History */}
+                        <div id="expense-history" className="pt-8">
+                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-3">Expense History</p>
+                            {expenses.length === 0 ? (
+                                <div className="rounded-xl border border-slate-200 bg-slate-50 px-5 py-6 text-center text-slate-500 text-sm font-medium shadow-sm">
+                                    No expenses recorded yet.
+                                </div>
+                            ) : (
+                                <ul className="space-y-3">
+                                    {expenses.map((exp) => (
+                                        <li
+                                            key={exp.id}
+                                            className="flex items-center justify-between rounded-xl border border-slate-200 bg-white shadow-sm px-5 py-4 hover:border-indigo-200 hover:bg-slate-50 transition-colors"
+                                        >
+                                            <div className="min-w-0">
+                                                <p className="font-bold text-slate-900 truncate text-base">{exp.description}</p>
+                                                <p className="text-xs text-slate-500 mt-1 font-semibold tracking-wide">
+                                                    PAID BY <span className="text-slate-700 font-bold">{exp.paidBy.name.toUpperCase()}</span>
+                                                    {" · "}
+                                                    {new Date(exp.createdAt).toLocaleDateString("en-IN", {
+                                                        day: "2-digit", month: "short", year: "numeric",
                                                     }).toUpperCase()}
                                                 </p>
                                             </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
+                                            <span className="ml-4 text-slate-900 font-extrabold tracking-tight text-lg tabular-nums shrink-0">
+                                                ₹{Number(exp.amount).toFixed(2)}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
-                    )}
-                </div>
-            </main>
+
+                        {/* Activity Timeline */}
+                        <div className="pt-10">
+                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-4">Activity Timeline</p>
+                            {activities.length === 0 ? (
+                                <div className="rounded-xl border border-slate-200 bg-slate-50 px-5 py-6 text-center text-slate-500 text-sm font-medium shadow-sm">
+                                    No activity yet.
+                                </div>
+                            ) : (
+                                <div className="relative border-l border-slate-200 ml-3 space-y-6 pb-4">
+                                    {activities.map((act) => (
+                                        <div key={act.id} className="relative pl-6 group">
+                                            <span className="absolute -left-[5px] top-1.5 h-2 w-2 rounded-full bg-indigo-500 ring-4 ring-white group-hover:bg-indigo-400 group-hover:ring-slate-50 transition-colors shadow-sm"></span>
+                                            <p className="text-sm font-semibold text-slate-700 group-hover:text-slate-900 transition-colors">{act.message}</p>
+                                            <p className="text-[11px] font-bold tracking-wide text-slate-400 mt-1">
+                                                {new Date(act.createdAt).toLocaleString("en-IN", {
+                                                    day: "numeric", month: "short", hour: "numeric", minute: "2-digit"
+                                                }).toUpperCase()}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </div>
 
             {/* Expense Modal */}
             {modalOpen && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
                     onClick={(e) => e.target === e.currentTarget && !submitting && setModalOpen(false)}
                 >
-                    <div className="w-full max-w-md rounded-2xl border border-gray-800 bg-gray-900 p-6">
+                    <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-semibold">Add Expense</h2>
+                            <h2 className="text-xl font-bold text-slate-900">Add Expense</h2>
                             <button
                                 onClick={() => !submitting && setModalOpen(false)}
-                                className="text-gray-500 hover:text-gray-300 transition-colors text-xl leading-none disabled:opacity-40"
+                                className="text-slate-400 hover:text-slate-600 transition-colors text-2xl leading-none disabled:opacity-40"
                                 disabled={submitting}
                             >
                                 ×
@@ -651,7 +664,7 @@ export default function GroupBalancesPage({
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
                                     Description <span className="text-red-500">*</span>
                                 </label>
                                 <input
@@ -664,14 +677,14 @@ export default function GroupBalancesPage({
                                     placeholder="Hotel, dinner, tickets…"
                                     disabled={submitting}
                                     autoFocus
-                                    className={`w-full rounded-lg border bg-gray-800 px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none transition-colors disabled:opacity-50 ${fieldErrors.description ? "border-red-500 focus:border-red-400" : "border-gray-700 focus:border-indigo-500"
+                                    className={`w-full rounded-xl border bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm placeholder-slate-400 focus:outline-none transition-all disabled:opacity-50 disabled:bg-slate-50 ${fieldErrors.description ? "border-red-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-slate-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                                         }`}
                                 />
-                                {fieldErrors.description && <p className="mt-1 text-xs text-red-400">{fieldErrors.description}</p>}
+                                {fieldErrors.description && <p className="mt-1 text-xs font-semibold text-red-500">{fieldErrors.description}</p>}
                             </div>
 
                             <div>
-                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
                                     Amount (₹) <span className="text-red-500">*</span>
                                 </label>
                                 <input
@@ -685,14 +698,14 @@ export default function GroupBalancesPage({
                                     }}
                                     placeholder="0.00"
                                     disabled={submitting}
-                                    className={`w-full rounded-lg border bg-gray-800 px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none transition-colors disabled:opacity-50 ${fieldErrors.amount ? "border-red-500 focus:border-red-400" : "border-gray-700 focus:border-indigo-500"
+                                    className={`w-full rounded-xl border bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm placeholder-slate-400 focus:outline-none transition-all disabled:opacity-50 disabled:bg-slate-50 ${fieldErrors.amount ? "border-red-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-slate-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                                         }`}
                                 />
-                                {fieldErrors.amount && <p className="mt-1 text-xs text-red-400">{fieldErrors.amount}</p>}
+                                {fieldErrors.amount && <p className="mt-1 text-xs font-semibold text-red-500">{fieldErrors.amount}</p>}
                             </div>
 
                             <div>
-                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
                                     Paid by <span className="text-red-500">*</span>
                                 </label>
                                 <select
@@ -702,7 +715,7 @@ export default function GroupBalancesPage({
                                         if (fieldErrors.paidById) setFieldErrors((fe) => ({ ...fe, paidById: undefined }));
                                     }}
                                     disabled={submitting}
-                                    className={`w-full rounded-lg border bg-gray-800 px-4 py-2.5 text-sm text-white focus:outline-none transition-colors disabled:opacity-50 ${fieldErrors.paidById ? "border-red-500 focus:border-red-400" : "border-gray-700 focus:border-indigo-500"
+                                    className={`w-full rounded-xl border bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm focus:outline-none transition-all disabled:opacity-50 disabled:bg-slate-50 ${fieldErrors.paidById ? "border-red-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-slate-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                                         }`}
                                 >
                                     <option value="" disabled>Select member…</option>
@@ -710,24 +723,24 @@ export default function GroupBalancesPage({
                                         <option key={m.userId} value={m.userId}>{m.name}</option>
                                     ))}
                                 </select>
-                                {fieldErrors.paidById && <p className="mt-1 text-xs text-red-400">{fieldErrors.paidById}</p>}
+                                {fieldErrors.paidById && <p className="mt-1 text-xs font-semibold text-red-500">{fieldErrors.paidById}</p>}
                             </div>
 
-                            {fieldErrors.server && <p className="text-red-400 text-xs">{fieldErrors.server}</p>}
+                            {fieldErrors.server && <p className="text-red-500 text-xs font-semibold">{fieldErrors.server}</p>}
 
-                            <div className="flex gap-3 pt-2">
+                            <div className="flex gap-3 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => setModalOpen(false)}
                                     disabled={submitting}
-                                    className="flex-1 rounded-lg border border-gray-700 py-2.5 text-sm text-gray-400 hover:border-gray-500 hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="flex-1 rounded-xl border border-slate-200 bg-white py-3 text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors py-2.5 text-sm font-medium text-white"
+                                    className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-colors py-3 text-sm font-bold text-white"
                                 >
                                     {submitting && <Spinner className="w-4 h-4" />}
                                     {submitting ? "Adding…" : "Add Expense"}
@@ -741,16 +754,16 @@ export default function GroupBalancesPage({
             {/* Add Member Modal */}
             {memberModalOpen && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
                     onClick={(e) => e.target === e.currentTarget && !memberSubmitting && setMemberModalOpen(false)}
                 >
-                    <div className="w-full max-w-sm rounded-2xl border border-gray-800 bg-gray-900 p-6">
+                    <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-semibold">Add Member</h2>
+                            <h2 className="text-xl font-bold text-slate-900">Add Member</h2>
                             <button
                                 onClick={() => !memberSubmitting && setMemberModalOpen(false)}
                                 disabled={memberSubmitting}
-                                className="text-gray-500 hover:text-gray-300 transition-colors text-xl leading-none disabled:opacity-40"
+                                className="text-slate-400 hover:text-slate-600 transition-colors text-2xl leading-none disabled:opacity-40"
                             >
                                 ×
                             </button>
@@ -758,7 +771,7 @@ export default function GroupBalancesPage({
 
                         <form onSubmit={handleMemberSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">Name</label>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">Name</label>
                                 <input
                                     type="text"
                                     value={memberForm.name}
@@ -766,13 +779,13 @@ export default function GroupBalancesPage({
                                     placeholder="Jane Doe"
                                     disabled={memberSubmitting}
                                     autoFocus
-                                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:border-indigo-500 focus:outline-none transition-colors disabled:opacity-50"
+                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm placeholder-slate-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-all disabled:opacity-50 disabled:bg-slate-50"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">
-                                    Email <span className="normal-case text-gray-600">(optional)</span>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
+                                    Email <span className="normal-case text-slate-400">(optional)</span>
                                 </label>
                                 <input
                                     type="email"
@@ -780,11 +793,11 @@ export default function GroupBalancesPage({
                                     onChange={(e) => setMemberForm((f) => ({ ...f, email: e.target.value }))}
                                     placeholder="jane@example.com"
                                     disabled={memberSubmitting}
-                                    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:border-indigo-500 focus:outline-none transition-colors disabled:opacity-50"
+                                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm placeholder-slate-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-all disabled:opacity-50 disabled:bg-slate-50"
                                 />
                             </div>
 
-                            {memberFormError && <p className="text-red-400 text-xs">{memberFormError}</p>}
+                            {memberFormError && <p className="text-red-500 font-semibold text-xs">{memberFormError}</p>}
 
                             <div className="flex gap-3 pt-2">
                                 <button
@@ -812,16 +825,16 @@ export default function GroupBalancesPage({
             {/* Record Payment Modal */}
             {settlementModalOpen && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4"
                     onClick={(e) => e.target === e.currentTarget && !settlementSubmitting && setSettlementModalOpen(false)}
                 >
-                    <div className="w-full max-w-sm rounded-2xl border border-gray-800 bg-gray-900 p-6">
+                    <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-lg font-semibold">Record a Payment</h2>
+                            <h2 className="text-xl font-bold text-slate-900">Record a Payment</h2>
                             <button
                                 onClick={() => !settlementSubmitting && setSettlementModalOpen(false)}
                                 disabled={settlementSubmitting}
-                                className="text-gray-500 hover:text-gray-300 transition-colors text-xl leading-none disabled:opacity-40"
+                                className="text-slate-400 hover:text-slate-600 transition-colors text-2xl leading-none disabled:opacity-40"
                             >
                                 ×
                             </button>
@@ -829,7 +842,7 @@ export default function GroupBalancesPage({
 
                         <form onSubmit={handleSettlementSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
                                     Who paid? <span className="text-red-500">*</span>
                                 </label>
                                 <select
@@ -839,7 +852,7 @@ export default function GroupBalancesPage({
                                         if (settlementFieldErrors.fromUserId) setSettlementFieldErrors((fe) => ({ ...fe, fromUserId: undefined }));
                                     }}
                                     disabled={settlementSubmitting}
-                                    className={`w-full rounded-lg border bg-gray-800 px-4 py-2.5 text-sm text-white focus:outline-none transition-colors disabled:opacity-50 ${settlementFieldErrors.fromUserId ? "border-red-500 focus:border-red-400" : "border-gray-700 focus:border-indigo-500"
+                                    className={`w-full rounded-xl border bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm focus:outline-none transition-all disabled:opacity-50 disabled:bg-slate-50 ${settlementFieldErrors.fromUserId ? "border-red-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-slate-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                                         }`}
                                 >
                                     <option value="" disabled>Select payer…</option>
@@ -847,11 +860,11 @@ export default function GroupBalancesPage({
                                         <option key={m.userId} value={m.userId}>{m.name}</option>
                                     ))}
                                 </select>
-                                {settlementFieldErrors.fromUserId && <p className="mt-1 text-xs text-red-400">{settlementFieldErrors.fromUserId}</p>}
+                                {settlementFieldErrors.fromUserId && <p className="mt-1 text-xs font-semibold text-red-500">{settlementFieldErrors.fromUserId}</p>}
                             </div>
 
                             <div>
-                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
                                     Who received it? <span className="text-red-500">*</span>
                                 </label>
                                 <select
@@ -861,7 +874,7 @@ export default function GroupBalancesPage({
                                         if (settlementFieldErrors.toUserId) setSettlementFieldErrors((fe) => ({ ...fe, toUserId: undefined }));
                                     }}
                                     disabled={settlementSubmitting}
-                                    className={`w-full rounded-lg border bg-gray-800 px-4 py-2.5 text-sm text-white focus:outline-none transition-colors disabled:opacity-50 ${settlementFieldErrors.toUserId ? "border-red-500 focus:border-red-400" : "border-gray-700 focus:border-indigo-500"
+                                    className={`w-full rounded-xl border bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm focus:outline-none transition-all disabled:opacity-50 disabled:bg-slate-50 ${settlementFieldErrors.toUserId ? "border-red-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-slate-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                                         }`}
                                 >
                                     <option value="" disabled>Select recipient…</option>
@@ -869,11 +882,11 @@ export default function GroupBalancesPage({
                                         <option key={m.userId} value={m.userId}>{m.name}</option>
                                     ))}
                                 </select>
-                                {settlementFieldErrors.toUserId && <p className="mt-1 text-xs text-red-400">{settlementFieldErrors.toUserId}</p>}
+                                {settlementFieldErrors.toUserId && <p className="mt-1 text-xs font-semibold text-red-500">{settlementFieldErrors.toUserId}</p>}
                             </div>
 
                             <div>
-                                <label className="block text-xs text-gray-500 uppercase tracking-widest mb-1.5">
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
                                     Amount (₹) <span className="text-red-500">*</span>
                                 </label>
                                 <input
@@ -887,27 +900,27 @@ export default function GroupBalancesPage({
                                     }}
                                     placeholder="0.00"
                                     disabled={settlementSubmitting}
-                                    className={`w-full rounded-lg border bg-gray-800 px-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none transition-colors disabled:opacity-50 ${settlementFieldErrors.amount ? "border-red-500 focus:border-red-400" : "border-gray-700 focus:border-indigo-500"
+                                    className={`w-full rounded-xl border bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm placeholder-slate-400 focus:outline-none transition-all disabled:opacity-50 disabled:bg-slate-50 ${settlementFieldErrors.amount ? "border-red-500 focus:ring-1 focus:ring-red-500 focus:border-red-500" : "border-slate-300 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                                         }`}
                                 />
-                                {settlementFieldErrors.amount && <p className="mt-1 text-xs text-red-400">{settlementFieldErrors.amount}</p>}
+                                {settlementFieldErrors.amount && <p className="mt-1 text-xs font-semibold text-red-500">{settlementFieldErrors.amount}</p>}
                             </div>
 
-                            {settlementFieldErrors.server && <p className="text-red-400 text-xs">{settlementFieldErrors.server}</p>}
+                            {settlementFieldErrors.server && <p className="text-red-500 text-xs font-semibold">{settlementFieldErrors.server}</p>}
 
-                            <div className="flex gap-3 pt-2">
+                            <div className="flex gap-3 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => setSettlementModalOpen(false)}
                                     disabled={settlementSubmitting}
-                                    className="flex-1 rounded-lg border border-gray-700 py-2.5 text-sm text-gray-400 hover:border-gray-500 hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="flex-1 rounded-xl border border-slate-200 bg-white py-3 text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={settlementSubmitting}
-                                    className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed transition-colors py-2.5 text-sm font-medium text-white"
+                                    className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-colors py-3 text-sm font-bold text-white"
                                 >
                                     {settlementSubmitting && <Spinner className="w-4 h-4" />}
                                     {settlementSubmitting ? "Recording…" : "Record Payment"}

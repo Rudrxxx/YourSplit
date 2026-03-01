@@ -2,69 +2,97 @@ import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-50 font-sans selection:bg-indigo-500/30">
-      {/* Navigation */}
-      <nav className="border-b border-white/5 bg-gray-950/50 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
-              Y
-            </div>
-            <span className="font-semibold text-lg tracking-tight">YourSplit</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-sm font-medium bg-white text-gray-900 px-4 py-2 rounded-full hover:bg-gray-200 transition-all hover:scale-105 active:scale-95">
-              Get Started
-            </Link>
-          </div>
-        </div>
-      </nav>
-
+    <div className="min-h-screen bg-transparent text-slate-900 font-sans selection:bg-indigo-600/30 selection:text-slate-900">
       <main className="flex flex-col items-center">
         {/* Hero Section */}
         <section className="w-full pt-32 pb-24 px-6 text-center relative overflow-hidden flex flex-col items-center">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-indigo-600/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 bg-gradient-to-br from-white via-white to-gray-500 bg-clip-text text-transparent max-w-4xl">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-500 bg-clip-text text-transparent max-w-4xl">
             Split Expenses Smarter.
           </h1>
 
-          <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-2xl leading-relaxed">
+          <p className="text-xl md:text-2xl text-slate-500 mb-12 max-w-2xl leading-relaxed">
             Track group expenses, visualize debt graphs, and settle with minimum transactions.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            <Link href="/dashboard" className="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-semibold text-lg transition-all hover:shadow-[0_0_40px_8px_rgba(79,70,229,0.3)] hover:-translate-y-1">
+            <Link href="/dashboard" className="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-semibold text-lg transition-all hover:shadow-[0_0_40px_8px_rgba(79,70,229,0.2)] hover:-translate-y-1">
               Get Started
             </Link>
-            <Link href="#demo" className="w-full sm:w-auto px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-full font-semibold text-lg transition-all backdrop-blur-sm">
+            <Link href="#demo" className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 shadow-sm hover:shadow-md rounded-full font-semibold text-lg transition-all">
               View Demo
             </Link>
           </div>
         </section>
 
-        {/* Visual Preview Placeholder */}
-        <section id="demo" className="w-full max-w-6xl px-6 mb-32 relative">
-          <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl blur opacity-20"></div>
-          <div className="relative aspect-[16/9] bg-gray-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center group overflow-hidden">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
-            <div className="flex flex-col items-center gap-4 z-10">
-              <div className="w-20 h-20 rounded-full bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30 group-hover:scale-110 transition-transform duration-500 cursor-pointer">
-                <svg className="w-10 h-10 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+        {/* Mock Debt Graph Preview */}
+        <section className="w-full max-w-5xl px-6 mb-32 text-center pt-8">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">See who owes whom instantly.</h2>
+          <p className="text-slate-500 text-lg mb-12">Visualizing complex group debts has never been easier.</p>
+          <div className="relative h-[400px] w-full bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.05)_0,transparent_100%)]"></div>
+
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.6 }}>
+              <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#6366f1" />
+                </marker>
+                <marker id="arrow-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981" />
+                </marker>
+                <marker id="arrow-pink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#ec4899" />
+                </marker>
+              </defs>
+              <line x1="25%" y1="25%" x2="50%" y2="50%" stroke="#6366f1" strokeWidth="2" strokeDasharray="4" markerEnd="url(#arrow)" />
+              <line x1="75%" y1="25%" x2="50%" y2="50%" stroke="#10b981" strokeWidth="2.5" markerEnd="url(#arrow-emerald)" />
+              <line x1="25%" y1="75%" x2="50%" y2="50%" stroke="#6366f1" strokeWidth="2" markerEnd="url(#arrow)" />
+              <line x1="75%" y1="75%" x2="50%" y2="50%" stroke="#ec4899" strokeWidth="2" strokeDasharray="4" markerEnd="url(#arrow-pink)" />
+              <line x1="25%" y1="25%" x2="75%" y2="25%" stroke="#6366f1" strokeWidth="1.5" strokeDasharray="4" markerEnd="url(#arrow)" />
+            </svg>
+
+            {/* Nodes */}
+            <div className="absolute top-[25%] left-[25%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center animate-pulse duration-3000">
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-indigo-50 border border-indigo-200 flex items-center justify-center mb-2 shadow-sm">
+                <span className="font-bold text-indigo-700 md:text-xl">Alex</span>
               </div>
-              <p className="text-gray-400 font-medium tracking-widest uppercase text-sm">Interactive Graph Preview</p>
+            </div>
+
+            <div className="absolute top-[25%] right-[25%] translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mb-2 shadow-sm">
+                <span className="font-bold text-emerald-700 md:text-xl">Ben</span>
+              </div>
+            </div>
+
+            <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10 transition-transform duration-500 hover:scale-110 cursor-pointer">
+              <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-indigo-600 border-4 border-white flex items-center justify-center mb-2 shadow-xl shadow-indigo-500/30 relative">
+                <span className="font-bold text-white text-lg md:text-2xl">You</span>
+                <div className="absolute -bottom-3 px-3 py-1 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full text-xs font-bold text-white whitespace-nowrap shadow-md">
+                  Gets ₹450
+                </div>
+              </div>
+            </div>
+
+            <div className="absolute bottom-[25%] left-[25%] -translate-x-1/2 translate-y-1/2 flex flex-col items-center">
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-pink-50 border border-pink-200 flex items-center justify-center mb-2 shadow-sm">
+                <span className="font-bold text-pink-700 md:text-xl">Chloe</span>
+              </div>
+            </div>
+
+            <div className="absolute bottom-[25%] right-[25%] translate-x-1/2 translate-y-1/2 flex flex-col items-center animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite]">
+              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center mb-2 shadow-sm">
+                <span className="font-bold text-blue-700 md:text-xl">Dave</span>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Features Section */}
-        <section className="w-full max-w-7xl px-6 py-24 border-t border-white/5">
+        <section className="w-full max-w-7xl px-6 py-24 border-t border-slate-200">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">Everything you need to manage group debt.</h2>
-            <p className="text-gray-400 text-lg">Powerful features wrapped in a beautiful, intuitive interface.</p>
+            <p className="text-slate-500 text-lg">Powerful features wrapped in a beautiful, intuitive interface.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -74,14 +102,17 @@ export default function LandingPage() {
               { title: "Optimized Settlement", desc: "Our algorithm minimizes the total number of transactions needed to settle up.", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
               { title: "Activity Timeline", desc: "A unified, chronological feed of every expense added and payment made.", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" }
             ].map((feat, i) => (
-              <div key={i} className="bg-white/[0.02] border border-white/[0.05] p-6 rounded-2xl hover:bg-white/[0.04] transition-all hover:-translate-y-1">
-                <div className="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center mb-6 border border-indigo-500/20">
-                  <svg className="w-6 h-6 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={feat.icon} />
+              <div key={i} className="group relative bg-white border border-slate-200 p-8 rounded-xl overflow-hidden shadow-sm hover:border-indigo-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-indigo-500/10">
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative z-10 w-14 h-14 bg-indigo-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-indigo-100 group-hover:scale-110 transition-all duration-300">
+                  <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={feat.icon} />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-white">{feat.title}</h3>
-                <p className="text-gray-400 leading-relaxed">{feat.desc}</p>
+                <div className="relative z-10">
+                  <h3 className="text-xl font-semibold mb-2 text-slate-900 group-hover:text-indigo-600 transition-colors">{feat.title}</h3>
+                  <p className="text-slate-500 leading-relaxed text-sm">{feat.desc}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -91,12 +122,12 @@ export default function LandingPage() {
         <section className="w-full max-w-7xl px-6 py-24">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">How It Works</h2>
-            <p className="text-gray-400 text-lg">Three simple steps to financial peace of mind.</p>
+            <p className="text-slate-500 text-lg">Three simple steps to financial peace of mind.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 relative">
             {/* Connecting Line */}
-            <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-indigo-500/0 via-indigo-500/20 to-indigo-500/0 -z-10"></div>
+            <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-indigo-200/0 via-indigo-200 to-indigo-200/0 -z-10"></div>
 
             {[
               { step: "1", title: "Create Group", desc: "Start a group for a trip, apartment, or event and invite your friends." },
@@ -104,50 +135,39 @@ export default function LandingPage() {
               { step: "3", title: "Settle Instantly", desc: "Check the optimized payment plan and settle up with minimal transfers." }
             ].map((item, i) => (
               <div key={i} className="flex flex-col items-center text-center">
-                <div className="w-24 h-24 rounded-full bg-gray-900 border border-indigo-500/30 flex items-center justify-center text-3xl font-bold text-indigo-400 mb-6 shadow-[0_0_30px_rgba(79,70,229,0.1)]">
+                <div className="w-24 h-24 rounded-full bg-white border border-indigo-100 flex items-center justify-center text-3xl font-bold text-indigo-600 mb-6 shadow-sm shadow-indigo-500/5">
                   {item.step}
                 </div>
-                <h3 className="text-2xl font-semibold mb-3">{item.title}</h3>
-                <p className="text-gray-400 text-lg max-w-sm">{item.desc}</p>
+                <h3 className="text-2xl font-semibold mb-3 text-slate-900">{item.title}</h3>
+                <p className="text-slate-500 text-lg max-w-sm">{item.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* CTA Section */}
-        <section className="w-full max-w-5xl px-6 py-24 text-center">
-          <div className="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-indigo-500/20 rounded-3xl p-12 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/30 rounded-full blur-[80px]"></div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-6 relative z-10">Ready to stop doing math?</h2>
-            <p className="text-xl text-indigo-200/80 mb-10 max-w-2xl mx-auto relative z-10">
-              Join thousands of users who are settling their group debts up to 80% faster with advanced optimization.
-            </p>
-            <Link href="/dashboard" className="px-8 py-4 bg-white text-gray-950 hover:bg-gray-200 rounded-full font-bold text-lg transition-all hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] relative z-10 inline-block">
-              Get Started for Free
-            </Link>
+        <section className="w-full max-w-5xl px-6 py-32 text-center">
+          <div className="bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-[2rem] p-[1px] relative overflow-hidden shadow-2xl shadow-indigo-500/20">
+            <div className="bg-white rounded-[31px] px-8 py-16 md:py-24 relative overflow-hidden h-full w-full flex flex-col items-center justify-center">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+              <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+              <h2 className="text-4xl md:text-6xl font-extrabold mb-6 relative z-10 tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                Ready to Split Smarter?
+              </h2>
+              <p className="text-xl text-slate-500 mb-10 max-w-2xl mx-auto relative z-10">
+                Stop chasing friends for money. Start managing expenses effortlessly today.
+              </p>
+              <Link href="/dashboard" className="px-10 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-full font-bold text-lg transition-all hover:shadow-lg hover:shadow-purple-500/25 hover:scale-105 active:scale-95 relative z-10 inline-flex items-center gap-2">
+                Start Managing Expenses
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </Link>
+            </div>
           </div>
         </section>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t border-white/5 py-12 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2 opacity-80">
-            <div className="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white text-xs">
-              Y
-            </div>
-            <span className="font-semibold text-gray-300">YourSplit</span>
-          </div>
-          <div className="flex gap-8 text-sm text-gray-500">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-white transition-colors">Contact Support</a>
-          </div>
-          <p className="text-sm text-gray-600">
-            &copy; {new Date().getFullYear()} YourSplit. All rights reserved.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }
