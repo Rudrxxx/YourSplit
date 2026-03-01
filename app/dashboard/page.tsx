@@ -105,7 +105,7 @@ export default function DashboardPage() {
         <main className="min-h-screen bg-transparent text-slate-900 px-6">
             {toast && <Toast message={toast} onDone={() => setToast(null)} />}
 
-            <div className="max-w-2xl mx-auto py-10">
+            <div className="max-w-2xl mx-auto py-10 animate-fade-in-up">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-12">
                     <div>
@@ -181,7 +181,7 @@ export default function DashboardPage() {
                             <li key={g.id}>
                                 <Link
                                     href={`/dashboard/groups/${g.id}`}
-                                    className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl border border-slate-200 bg-white hover:border-indigo-300 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-lg hover:shadow-indigo-500/10 hover:-translate-y-1"
+                                    className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-8 rounded-3xl border border-slate-200 bg-white hover:border-indigo-200 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md hover:shadow-indigo-500/5 hover:scale-[1.01]"
                                 >
                                     <div>
                                         <h3 className="font-bold text-xl text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">{g.name}</h3>
@@ -197,11 +197,9 @@ export default function DashboardPage() {
                                         </p>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-50 group-hover:bg-indigo-50 text-slate-400 group-hover:text-indigo-600 border border-slate-100 group-hover:border-indigo-100 transition-all duration-300">
-                                            <svg className="w-5 h-5 translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                                            </svg>
-                                        </span>
+                                        <svg className="w-5 h-5 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-1 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                        </svg>
                                     </div>
                                 </Link>
                             </li>

@@ -5,29 +5,39 @@ export default function LandingPage() {
     <div className="min-h-screen bg-transparent text-slate-900 font-sans selection:bg-indigo-600/30 selection:text-slate-900">
       <main className="flex flex-col items-center">
         {/* Hero Section */}
-        <section className="w-full pt-32 pb-24 px-6 text-center relative overflow-hidden flex flex-col items-center">
+        <section className="w-full pt-32 pb-24 px-6 text-center relative flex flex-col items-center animate-fade-in-up">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-indigo-600/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-500 bg-clip-text text-transparent max-w-4xl">
-            Split Expenses Smarter.
-          </h1>
+          {/* Subtle 3D Floating Element */}
+          <div className="hidden lg:block absolute right-[15%] top-[25%] -z-10 pointer-events-none">
+            <div className="w-32 h-32 rounded-full border border-white bg-gradient-to-br from-white via-indigo-50 to-slate-200 shadow-[10px_20px_30px_-10px_rgba(79,70,229,0.2),inset_-10px_-10px_20px_rgba(0,0,0,0.05)] opacity-80 animate-[spin_15s_linear_infinite]" style={{ animationDirection: 'alternate' }}>
+              <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.8),transparent_50%)]"></div>
+            </div>
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-4 bg-slate-900/5 blur-md rounded-full"></div>
+          </div>
 
-          <p className="text-xl md:text-2xl text-slate-500 mb-12 max-w-2xl leading-relaxed">
-            Track group expenses, visualize debt graphs, and settle with minimum transactions.
-          </p>
+          <div className="relative z-10 w-full flex flex-col items-center">
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-500 bg-clip-text text-transparent max-w-4xl">
+              Split Expenses Smarter.
+            </h1>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            <Link href="/dashboard" className="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-semibold text-lg transition-all hover:shadow-[0_0_40px_8px_rgba(79,70,229,0.2)] hover:-translate-y-1">
-              Get Started
-            </Link>
-            <Link href="#demo" className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 shadow-sm hover:shadow-md rounded-full font-semibold text-lg transition-all">
-              View Demo
-            </Link>
+            <p className="text-xl md:text-2xl text-slate-500 mb-12 max-w-2xl leading-relaxed">
+              Track group expenses, visualize debt graphs, and settle with minimum transactions.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <Link href="/dashboard" className="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full font-semibold text-lg transition-all hover:shadow-[0_0_40px_8px_rgba(79,70,229,0.2)] hover:-translate-y-1">
+                Get Started
+              </Link>
+              <Link href="#demo" className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 shadow-sm hover:shadow-md rounded-full font-semibold text-lg transition-all">
+                View Demo
+              </Link>
+            </div>
           </div>
         </section>
 
         {/* Mock Debt Graph Preview */}
-        <section className="w-full max-w-5xl px-6 mb-32 text-center pt-8">
+        <section className="w-full max-w-5xl px-6 mb-32 text-center pt-8 animate-fade-in-up animate-delay-100">
           <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">See who owes whom instantly.</h2>
           <p className="text-slate-500 text-lg mb-12">Visualizing complex group debts has never been easier.</p>
           <div className="relative h-[400px] w-full bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50 flex items-center justify-center">
@@ -89,7 +99,7 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section className="w-full max-w-7xl px-6 py-24 border-t border-slate-200">
+        <section className="w-full max-w-7xl px-6 py-24 border-t border-slate-200 animate-fade-in-up animate-delay-200">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">Everything you need to manage group debt.</h2>
             <p className="text-slate-500 text-lg">Powerful features wrapped in a beautiful, intuitive interface.</p>
@@ -119,7 +129,7 @@ export default function LandingPage() {
         </section>
 
         {/* How It Works Section */}
-        <section className="w-full max-w-7xl px-6 py-24">
+        <section className="w-full max-w-7xl px-6 py-24 animate-fade-in-up animate-delay-300">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">How It Works</h2>
             <p className="text-slate-500 text-lg">Three simple steps to financial peace of mind.</p>
@@ -146,7 +156,7 @@ export default function LandingPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="w-full max-w-5xl px-6 py-32 text-center">
+        <section className="w-full max-w-5xl px-6 py-32 text-center animate-fade-in-up">
           <div className="bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 rounded-[2rem] p-[1px] relative overflow-hidden shadow-2xl shadow-indigo-500/20">
             <div className="bg-white rounded-[31px] px-8 py-16 md:py-24 relative overflow-hidden h-full w-full flex flex-col items-center justify-center">
               <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>

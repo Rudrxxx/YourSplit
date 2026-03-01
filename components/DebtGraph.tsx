@@ -107,9 +107,9 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
     // Stable node color callback — prevents new function allocation on every render
     const getNodeColor = useCallback((node: Record<string, unknown>) => {
         const balance = node.balance as number;
-        if (balance > 0) return "#059669"; // emerald-600 for positive
+        if (balance > 0) return "#16a34a"; // green-600 for positive
         if (balance < 0) return "#dc2626"; // red-600 for negative
-        return "#64748b"; // slate-500 for neutral
+        return "#94a3b8"; // slate-400 for neutral
     }, []);
 
     // Memoize the active graph object — only recomputes when data or mode changes
@@ -120,7 +120,7 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
 
     // Stable link props — prevents ForceGraph2D re-mounting on every render
     const getLinkColor = useCallback((link: Record<string, unknown>) =>
-        link.type === viewMode ? "rgba(148, 163, 184, 0.6)" : "rgba(0,0,0,0)"
+        link.type === viewMode ? "rgba(148, 163, 184, 0.4)" : "rgba(0,0,0,0)"
         , [viewMode]);
 
     const getLinkWidth = useCallback((link: Record<string, unknown>) =>
@@ -203,6 +203,22 @@ function DebtGraphInner({ groupId }: { groupId: string }) {
                     }}
                     nodeColor={getNodeColor}
                     nodeRelSize={5}
+                    nodeCanvasObject={(node: Record<string, unknown>, ctx: CanvasRenderingContext2D) => {
+                        const size = 5;
+                        const x = node.x as number;
+                        const y = node.y as number;
+                        const color = getNodeColor(node);
+
+                        ctx.beginPath();
+                        ctx.arc(x, y, size, 0, 2 * Math.PI, false);
+                        ctx.fillStyle = color;
+                        ctx.shadowColor = color;
+                        ctx.shadowBlur = 10;
+                        ctx.fill();
+
+                        // Reset shadow for other canvas elements
+                        ctx.shadowBlur = 0;
+                    }}
                     linkColor={getLinkColor}
                     linkWidth={getLinkWidth}
                     linkDirectionalArrowLength={getLinkArrowLength}
